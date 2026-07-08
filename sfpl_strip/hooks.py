@@ -10,6 +10,12 @@ app_license = "mit"
 
 # required_apps = []
 
+fixtures = [
+    "Workflow",
+    "Workflow State",
+    "Workflow Action Master"
+]
+
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
@@ -86,7 +92,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "sfpl_strip.install.before_install"
-# after_install = "sfpl_strip.install.after_install"
+after_install = "sfpl_strip.install.after_install"
 
 # Uninstallation
 # ------------

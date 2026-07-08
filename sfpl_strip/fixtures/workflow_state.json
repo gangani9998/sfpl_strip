@@ -1,0 +1,110 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "question-sign",
+  "modified": "2026-06-24 13:26:21.791152",
+  "name": "Pending",
+  "style": "",
+  "workflow_state_name": "Pending"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "ok-sign",
+  "modified": "2026-06-24 13:26:21.792949",
+  "name": "Approved",
+  "style": "Success",
+  "workflow_state_name": "Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2026-06-24 13:26:21.795399",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-06-24 16:06:26.571830",
+  "name": "IMS Draft",
+  "style": "Success",
+  "workflow_state_name": "IMS Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-06-24 16:06:26.757252",
+  "name": "IMS Under Review",
+  "style": "Warning",
+  "workflow_state_name": "IMS Under Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-06-24 16:06:26.759558",
+  "name": "IMS Approved",
+  "style": "Primary",
+  "workflow_state_name": "IMS Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-06-24 16:06:26.761066",
+  "name": "IMS Obsolete",
+  "style": "Danger",
+  "workflow_state_name": "IMS Obsolete"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-04 12:22:41.304148",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-04 12:22:41.344094",
+  "name": "Waiting",
+  "style": "",
+  "workflow_state_name": "Waiting"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-04 12:22:41.346388",
+  "name": "Drawing",
+  "style": "",
+  "workflow_state_name": "Drawing"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-04 12:22:41.347908",
+  "name": "Under Production",
+  "style": "",
+  "workflow_state_name": "Under Production"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-04 12:22:41.349178",
+  "name": "Job Complete",
+  "style": "",
+  "workflow_state_name": "Job Complete"
+ }
+]

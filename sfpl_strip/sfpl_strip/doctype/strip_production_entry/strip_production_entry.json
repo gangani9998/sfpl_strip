@@ -1,0 +1,283 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-04 12:06:08.511161",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "strip_work_schedule",
+  "strip_product_code",
+  "col_break_1",
+  "posting_date",
+  "posting_time",
+  "strip_width_mm",
+  "barcode",
+  "dim_section",
+  "roll_length",
+  "roll_gross_weight",
+  "col_break_2",
+  "papertube_weight",
+  "roll_net_weight",
+  "params_section",
+  "extruder_rpm",
+  "barrel_z1",
+  "barrel_z2",
+  "barrel_z3",
+  "barrel_z4",
+  "barrel_z5",
+  "col_break_3",
+  "die_z1",
+  "die_z2",
+  "haul_off_rpm",
+  "haul_off_temp",
+  "haul_off_follower_rpm",
+  "water_temp",
+  "bom_tab",
+  "gsm",
+  "yarn_details",
+  "coating_details",
+  "total_yarn_weight",
+  "total_coating_weight",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "strip_work_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Strip Work Schedule",
+   "options": "Strip Work Schedule",
+   "reqd": 1,
+   "search_index": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "G-PE-.YYYY.-.#####\nP-PE-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "label": "Posting Time",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "strip_work_schedule.quality",
+   "fieldname": "strip_product_code",
+   "fieldtype": "Link",
+   "label": "Product Code (Item)",
+   "options": "Item",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dim_section",
+   "fieldtype": "Section Break",
+   "label": "Roll Dimensions"
+  },
+  {
+   "fieldname": "roll_length",
+   "fieldtype": "Float",
+   "label": "Roll Length (m)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "roll_gross_weight",
+   "fieldtype": "Float",
+   "label": "Roll Gross Weight (kg)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "papertube_weight",
+   "fieldtype": "Float",
+   "label": "Paper Tube Weight (kg)",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "roll_net_weight",
+   "fieldtype": "Float",
+   "label": "Roll Net Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "params_section",
+   "fieldtype": "Section Break",
+   "label": "Extrusion Parameters"
+  },
+  {
+   "fieldname": "barrel_z1",
+   "fieldtype": "Float",
+   "label": "Barrel Zone 1 Temp"
+  },
+  {
+   "fieldname": "barrel_z2",
+   "fieldtype": "Float",
+   "label": "Barrel Zone 2 Temp"
+  },
+  {
+   "fieldname": "barrel_z3",
+   "fieldtype": "Float",
+   "label": "Barrel Zone 3 Temp"
+  },
+  {
+   "fieldname": "barrel_z4",
+   "fieldtype": "Float",
+   "label": "Barrel Zone 4 Temp"
+  },
+  {
+   "fieldname": "barrel_z5",
+   "fieldtype": "Float",
+   "label": "Barrel Zone 5 Temp"
+  },
+  {
+   "fieldname": "col_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "die_z1",
+   "fieldtype": "Float",
+   "label": "Die Zone 1 Temp"
+  },
+  {
+   "fieldname": "die_z2",
+   "fieldtype": "Float",
+   "label": "Die Zone 2 Temp"
+  },
+  {
+   "fieldname": "extruder_rpm",
+   "fieldtype": "Float",
+   "label": "Extruder RPM"
+  },
+  {
+   "fieldname": "haul_off_rpm",
+   "fieldtype": "Float",
+   "label": "Haul-Off RPM"
+  },
+  {
+   "fieldname": "water_temp",
+   "fieldtype": "Float",
+   "label": "Water Temp"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Strip Production Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Barcode",
+   "label": "Roll Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bom_tab",
+   "fieldtype": "Tab Break",
+   "label": "BOM"
+  },
+  {
+   "fieldname": "total_yarn_weight",
+   "fieldtype": "Float",
+   "label": "Total Yarn Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_coating_weight",
+   "fieldtype": "Float",
+   "label": "Total Coating Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "yarn_details",
+   "fieldtype": "Table",
+   "label": "Yarn Details",
+   "options": "Strip Production Yarn",
+   "read_only": 1
+  },
+  {
+   "fieldname": "coating_details",
+   "fieldtype": "Table",
+   "label": "Coating Details",
+   "options": "Strip Production Coating",
+   "read_only": 1
+  },
+  {
+   "fieldname": "haul_off_temp",
+   "fieldtype": "Float",
+   "label": "Haul-Off Temp"
+  },
+  {
+   "fieldname": "haul_off_follower_rpm",
+   "fieldtype": "Float",
+   "label": "Haul-Off Follower RPM"
+  },
+  {
+   "fieldname": "gsm",
+   "fieldtype": "Float",
+   "label": "GLM (g/m)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "strip_width_mm",
+   "fieldtype": "Float",
+   "label": "Strip Width (mm)",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-07-06 16:59:26.062289",
+ "modified_by": "Administrator",
+ "module": "SFPL Strip",
+ "name": "Strip Production Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

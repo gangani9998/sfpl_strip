@@ -1,0 +1,216 @@
+// Copyright (c) 2026, Jay Kumar Gangani and contributors
+// For license information, please see license.txt
+
+frappe.ui.form.on("Strip Production Entry", {
+    setup(frm) {
+        // Fetch previous parameters on load if form is new
+        if (frm.is_new() && frm.doc.strip_work_schedule) {
+            fetch_previous_parameters(frm);
+        }
+    },
+    strip_work_schedule(frm) {
+        if (frm.doc.strip_work_schedule) {
+            fetch_previous_parameters(frm);
+        }
+    },
+    refresh(frm) {
+        frm.toggle_enable('roll_net_weight', false);
+        
+        // Auto-fetch if draft has empty tables (recovering from old drafts)
+        if (frm.doc.docstatus === 0 && frm.doc.strip_work_schedule) {
+            if (!frm.doc.yarn_details || frm.doc.yarn_details.length === 0) {
+                fetch_previous_parameters(frm);
+            }
+        }
+        
+        // Hide the raw text value of the barcode field since the SVG already has it
+        let barcode_wrapper = frm.get_field('barcode').$wrapper;
+        barcode_wrapper.find('.control-value').hide();
+        barcode_wrapper.find('input').hide();
+        
+        // Filter Product Code field to only show Items marked as Quality Item
+        frm.set_query("strip_product_code", function () {
+            return {
+                filters: {
+                    is_quality_item: 1
+                }
+            };
+        });
+        
+        // Filter Work Schedule field to only show valid schedules
+        frm.set_query("strip_work_schedule", function () {
+            return {
+                filters: {
+                    docstatus: 1,
+                    workflow_state: "Under Production"
+                }
+            };
+        });
+        
+        if (!frm.is_new()) {
+            frm.add_custom_button(__("Create Production Entry"), function() {
+                frappe.model.with_doctype("Strip Production Entry", () => {
+                    let doc = frappe.model.get_new_doc("Strip Production Entry");
+                    doc.strip_work_schedule = frm.doc.strip_work_schedule;
+                    frappe.set_route('Form', "Strip Production Entry", doc.name);
+                });
+            });
+
+            if (frm.doc.docstatus === 1) {
+                frm.add_custom_button(__("Open Batch"), function() {
+                    frappe.set_route('Form', 'Batch', frm.doc.name);
+                });
+                
+                frm.add_custom_button(__("Create MTC"), function() {
+                    // Determine which MTC to create based on naming series or a flag.
+                    // Assuming G-PE is for GS MTC and P-PE is for PS MTC
+                    let target_doctype = frm.doc.name.startsWith("G-PE") ? "GS MTC" : "PS MTC";
+                    
+                    frappe.model.with_doctype(target_doctype, () => {
+                        let mtc = frappe.model.get_new_doc(target_doctype);
+                        mtc.lot_no = frm.doc.strip_work_schedule;
+                        mtc.roll_no = frm.doc.name;
+                        frappe.set_route('Form', target_doctype, mtc.name);
+                    });
+                }).addClass("btn-primary");
+            }
+        }
+    },
+    
+    roll_gross_weight(frm) {
+        calculate_net_weight(frm);
+    },
+    
+    papertube_weight(frm) {
+        calculate_net_weight(frm);
+    },
+
+    validate(frm) {
+        calculate_net_weight(frm);
+        calculate_bom_weights(frm);
+    }
+});
+
+function calculate_net_weight(frm) {
+    let gross = flt(frm.doc.roll_gross_weight);
+    let tube = flt(frm.doc.papertube_weight);
+    let net = gross - tube;
+    if (net < 0) net = 0;
+    frm.set_value('roll_net_weight', net);
+    
+    let roll_length = flt(frm.doc.roll_length);
+    if (roll_length > 0) {
+        let gsm = (net / roll_length) * 1000;
+        frm.set_value('gsm', gsm);
+    } else {
+        frm.set_value('gsm', 0);
+    }
+}
+
+function calculate_bom_weights(frm) {
+    let roll_length = flt(frm.doc.roll_length);
+    let net_weight = flt(frm.doc.roll_net_weight);
+    
+    // Also recalculate GSM here just in case length changes but gross weight doesn't
+    if (roll_length > 0) {
+        let gsm = (net_weight / roll_length) * 1000;
+        frm.set_value('gsm', gsm);
+    } else {
+        frm.set_value('gsm', 0);
+    }
+    
+    // 1. Calculate Yarn Weights
+    let total_yarn_weight = 0;
+    if (frm.doc.yarn_details) {
+        frm.doc.yarn_details.forEach(d => {
+            // (Denier * Number of Yarn * 0.0001111 * Roll Length) / 1000 to get kg
+            let row_weight = (flt(d.denier) * flt(d.number_of_yarn) * 0.0001111 * roll_length) / 1000;
+            frappe.model.set_value(d.doctype, d.name, 'weight', row_weight);
+            total_yarn_weight += row_weight;
+        });
+    }
+    
+    // 2. Calculate Coating Weights
+    let total_coating_weight = net_weight - total_yarn_weight;
+    if (total_coating_weight < 0) total_coating_weight = 0;
+    
+    if (frm.doc.coating_details) {
+        frm.doc.coating_details.forEach(d => {
+            let row_weight = total_coating_weight * (flt(d.ratio) / 100);
+            frappe.model.set_value(d.doctype, d.name, 'weight', row_weight);
+        });
+    }
+    
+    frm.set_value('total_yarn_weight', total_yarn_weight);
+    frm.set_value('total_coating_weight', total_coating_weight);
+}
+
+function fetch_previous_parameters(frm) {
+    frappe.call({
+        method: "frappe.client.get",
+        args: {
+            doctype: "Strip Work Schedule",
+            name: frm.doc.strip_work_schedule
+        },
+        callback: function(r) {
+            if (r.message) {
+                let ws = r.message;
+                
+                // Clear and populate Yarn Details
+                frm.clear_table("yarn_details");
+                if (ws.warp_data) {
+                    ws.warp_data.forEach(d => {
+                        let row = frm.add_child("yarn_details");
+                        row.yarn = d.yarn;
+                        row.denier = d.denier;
+                        row.number_of_yarn = d.number_of_yarn;
+                        row.denier_strength = d.denier_strength;
+                    });
+                }
+                
+                // Clear and populate Coating Details
+                frm.clear_table("coating_details");
+                if (ws.default_coating_ratios) {
+                    ws.default_coating_ratios.forEach(d => {
+                        let row = frm.add_child("coating_details");
+                        row.coating_material = d.coating_material;
+                        row.ratio = d.ratio;
+                    });
+                }
+                
+                frm.refresh_field("yarn_details");
+                frm.refresh_field("coating_details");
+                
+                calculate_bom_weights(frm);
+            }
+        }
+    });
+    
+    // Still fetch previous extrusion parameters
+    frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+            doctype: "Strip Production Entry",
+            filters: {
+                strip_work_schedule: frm.doc.strip_work_schedule
+            },
+            fields: [
+                "barrel_z1", "barrel_z2", "barrel_z3", "barrel_z4", "barrel_z5",
+                "die_z1", "die_z2", "extruder_rpm", "haul_off_rpm", "water_temp",
+                "haul_off_temp", "haul_off_follower_rpm", "strip_width_mm"
+            ],
+            order_by: "creation desc",
+            limit: 1
+        },
+        callback: function(r) {
+            if (r.message && r.message.length > 0) {
+                let prev = r.message[0];
+                for (let key in prev) {
+                    if (!frm.doc[key]) {
+                        frm.set_value(key, prev[key]);
+                    }
+                }
+            }
+        }
+    });
+}

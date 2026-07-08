@@ -1,0 +1,325 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "SWS-.YYYY.-.#####",
+ "creation": "2026-07-04 12:06:08.318172",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "schedule_section",
+  "extrusion_line",
+  "quality",
+  "target_qty",
+  "roll_size",
+  "column_break_schedule",
+  "die_no",
+  "sizer_no",
+  "target_gsm",
+  "warp_data_section",
+  "warp_data",
+  "section_break_ts",
+  "strip_tensile_strength",
+  "column_break_ts",
+  "strip_tensile_strength_kg",
+  "section_break_coating",
+  "default_coating_ratios",
+  "col_break_coating_1",
+  "default_paper_tube",
+  "col_break_coating_2",
+  "wastage_item",
+  "wastage_section",
+  "wastage_entries",
+  "wastage_qty",
+  "amended_from",
+  "production_analysis_tab",
+  "batch_production_meter",
+  "submitted_production_meter",
+  "draft_production_meter",
+  "col_break_pa1",
+  "total_produced_meter",
+  "remain_production_meter",
+  "total_roll",
+  "col_break_pa2",
+  "average_gsm",
+  "yarn_coating_ratio",
+  "wastage_posted",
+  "created_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "extrusion_line",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Extrusion Line",
+   "options": "Extrusion Line",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_coating_ratios",
+   "fieldtype": "Table",
+   "label": "Default Coating Ratios",
+   "options": "Strip Coating Ratio"
+  },
+  {
+   "fieldname": "schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Work Schedule"
+  },
+  {
+   "fieldname": "quality",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Quality (Item)",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "wastage_section",
+   "fieldtype": "Section Break",
+   "label": "Log Event Wastage"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "wastage_item",
+   "fieldtype": "Link",
+   "label": "Wastage/Scrap Item",
+   "mandatory_depends_on": "eval:doc.workflow_state=='Job Complete'",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "wastage_qty",
+   "fieldtype": "Float",
+   "label": "Total Wastage Quantity (Kg)",
+   "mandatory_depends_on": "eval:doc.workflow_state=='Job Complete'",
+   "read_only": 1
+  },
+  {
+   "fieldname": "warp_data",
+   "fieldtype": "Table",
+   "label": "Warp Data",
+   "options": "Strip Yarn Data"
+  },
+  {
+   "fieldname": "warp_data_section",
+   "fieldtype": "Section Break",
+   "label": "Warp Data"
+  },
+  {
+   "fieldname": "strip_tensile_strength",
+   "fieldtype": "Float",
+   "label": "Strip Tensile Strength (kN)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "target_qty",
+   "fieldtype": "Int",
+   "label": "Planned Production (Meters)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "roll_size",
+   "fieldtype": "Int",
+   "label": "Roll Size (Meters)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_gsm",
+   "fieldtype": "Float",
+   "label": "Target GLM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Datetime",
+   "label": "Created On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "die_no",
+   "fieldtype": "Link",
+   "label": "Die No",
+   "options": "Die",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sizer_no",
+   "fieldtype": "Link",
+   "label": "Sizer No",
+   "options": "Sizer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Strip Work Schedule",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "strip_tensile_strength_kg",
+   "fieldtype": "Float",
+   "label": "Strip Tensile Strength (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_coating",
+   "fieldtype": "Section Break",
+   "label": "Coating Data"
+  },
+  {
+   "fieldname": "section_break_ts",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "production_analysis_tab",
+   "fieldtype": "Tab Break",
+   "label": "Production Analysis"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "batch_production_meter",
+   "fieldtype": "Float",
+   "label": "Batch Production - Meter",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "submitted_production_meter",
+   "fieldtype": "Float",
+   "label": "Submitted Production - Meter",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "draft_production_meter",
+   "fieldtype": "Float",
+   "label": "Draft Production - Meter",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break_pa1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_produced_meter",
+   "fieldtype": "Float",
+   "label": "Total Produced - Meter",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "remain_production_meter",
+   "fieldtype": "Float",
+   "label": "Remain Production - Meter",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "total_roll",
+   "fieldtype": "Int",
+   "label": "Total Roll",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break_pa2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "average_gsm",
+   "fieldtype": "Float",
+   "label": "Average GLM",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "yarn_coating_ratio",
+   "fieldtype": "Data",
+   "label": "Yarn Coating Ratio",
+   "read_only": 1
+  },
+  {
+   "fieldname": "default_paper_tube",
+   "fieldtype": "Link",
+   "label": "Paper Tube (Packing Material)",
+   "options": "Item"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "wastage_entries",
+   "fieldtype": "Table",
+   "label": "Wastage Log",
+   "options": "Strip Wastage Entry"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "wastage_posted",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Wastage Posted"
+  },
+  {
+   "fieldname": "col_break_coating_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "col_break_coating_2",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-07-08 16:29:08.267019",
+ "modified_by": "Administrator",
+ "module": "SFPL Strip",
+ "name": "Strip Work Schedule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
