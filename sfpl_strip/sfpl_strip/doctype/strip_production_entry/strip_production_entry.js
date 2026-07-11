@@ -42,7 +42,7 @@ frappe.ui.form.on("Strip Production Entry", {
             return {
                 filters: {
                     docstatus: 1,
-                    workflow_state: "Under Production"
+                    workflow_state: ["in", ["Under Production", "Under production"]]
                 }
             };
         });

@@ -12,7 +12,7 @@ class StripProductionEntry(Document):
     def validate(self):
         if self.strip_work_schedule and self.is_new():
             ws = frappe.get_doc("Strip Work Schedule", self.strip_work_schedule)
-            if ws.docstatus != 1 or ws.workflow_state != "Under Production":
+            if ws.docstatus != 1 or ws.workflow_state not in ["Under Production", "Under production"]:
                 frappe.throw(f"Production Entries can only be created against Work Schedules that are 'Under Production'. The selected Work Schedule {ws.name} is currently '{ws.workflow_state}'.")
                 
         if flt(self.roll_gross_weight) > 50:
