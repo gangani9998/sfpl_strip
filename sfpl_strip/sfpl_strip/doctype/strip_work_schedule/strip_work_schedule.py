@@ -13,7 +13,7 @@ class StripWorkSchedule(Document):
         self.check_mtc_gate()
 
     def validate_wastage_requirement(self):
-        if self.workflow_state == "Job Complete":
+        if self.get("workflow_state") == "Job Complete":
             # Check if there are any submitted production entries
             has_production = frappe.db.exists("Strip Production Entry", {"strip_work_schedule": self.name, "docstatus": 1})
             if has_production:
@@ -52,7 +52,7 @@ class StripWorkSchedule(Document):
             if total_ratio != 100.0:
                 frappe.throw(f"Total Coating Ratio must be exactly 100%. Currently it is {total_ratio}%")
     def validate_single_active_constraint(self):
-        if self.workflow_state in ["Drawing", "Under Production"]:
+        if self.get("workflow_state") in ["Drawing", "Under Production"]:
             existing = frappe.get_all(
                 "Strip Work Schedule",
                 filters={
@@ -66,7 +66,7 @@ class StripWorkSchedule(Document):
                 
         # Validate that if status is Job Complete, there must be wastage recorded (if needed)
     def check_mtc_gate(self):
-        if self.workflow_state == "Job Complete":
+        if self.get("workflow_state") == "Job Complete":
             # Just a placeholder for MTC gate check, will expand when MTCs are built
             pass
 
@@ -78,7 +78,7 @@ class StripWorkSchedule(Document):
         pass
 
     def on_update_after_submit(self):
-        if self.workflow_state == "Job Complete":
+        if self.get("workflow_state") == "Job Complete":
             self.validate_wastage_requirement()
             if not self.wastage_posted:
                 self.post_wastage_entry()
