@@ -61,15 +61,15 @@ frappe.ui.form.on("Strip Production Entry", {
                     frappe.set_route('Form', 'Batch', frm.doc.name);
                 });
                 
-                frm.add_custom_button(__("Create MTC"), function() {
-                    // Determine which MTC to create based on naming series or a flag.
-                    // Assuming G-PE is for GS MTC and P-PE is for PS MTC
-                    let target_doctype = frm.doc.name.startsWith("G-PE") ? "GS MTC" : "PS MTC";
+                frm.add_custom_button(__("Create MTC Strip"), function() {
+                    let target_doctype = "MTC Strip";
                     
                     frappe.model.with_doctype(target_doctype, () => {
                         let mtc = frappe.model.get_new_doc(target_doctype);
                         mtc.lot_no = frm.doc.strip_work_schedule;
                         mtc.roll_no = frm.doc.name;
+                        mtc.product_name = frm.doc.strip_product_code;
+                        mtc.roll_width = frm.doc.actual_strip_width;
                         frappe.set_route('Form', target_doctype, mtc.name);
                     });
                 }).addClass("btn-primary");
@@ -81,11 +81,27 @@ frappe.ui.form.on("Strip Production Entry", {
         calculate_net_weight(frm);
     },
     
-    papertube_weight(frm) {
+    total_packaging_weight(frm) {
         calculate_net_weight(frm);
     },
 
     validate(frm) {
+        if (flt(frm.doc.actual_strip_width) > 100) {
+            frappe.msgprint({
+                title: __('Validation Error'),
+                indicator: 'red',
+                message: __('Actual Strip Width (mm) cannot be greater than 100 mm.')
+            });
+            frappe.validated = false;
+        }
+        if (flt(frm.doc.roll_gross_weight) < 1) {
+            frappe.msgprint({
+                title: __('Validation Error'),
+                indicator: 'red',
+                message: __('Roll Gross Weight (kg) cannot be less than 1 kg.')
+            });
+            frappe.validated = false;
+        }
         calculate_net_weight(frm);
         calculate_bom_weights(frm);
     }
@@ -93,7 +109,28 @@ frappe.ui.form.on("Strip Production Entry", {
 
 function calculate_net_weight(frm) {
     let gross = flt(frm.doc.roll_gross_weight);
-    let tube = flt(frm.doc.papertube_weight);
+    let tube = flt(frm.doc.total_packaging_weight);
+    
+    if (gross > 50) {
+        frappe.msgprint({
+            title: __('Validation Error'),
+            indicator: 'red',
+            message: __('Roll Gross Weight cannot be greater than 50 kg.')
+        });
+        frappe.model.set_value(frm.doctype, frm.docname, 'roll_gross_weight', 0);
+        gross = 0;
+    }
+    
+    if (gross > 0 && tube >= gross) {
+        frappe.msgprint({
+            title: __('Validation Error'),
+            indicator: 'red',
+            message: __('Total Packaging Weight cannot be greater than or equal to Roll Gross Weight.')
+        });
+        frappe.model.set_value(frm.doctype, frm.docname, 'total_packaging_weight', 0);
+        tube = 0;
+    }
+    
     let net = gross - tube;
     if (net < 0) net = 0;
     frm.set_value('roll_net_weight', net);
@@ -197,7 +234,7 @@ function fetch_previous_parameters(frm) {
             fields: [
                 "barrel_z1", "barrel_z2", "barrel_z3", "barrel_z4", "barrel_z5",
                 "die_z1", "die_z2", "extruder_rpm", "haul_off_rpm", "water_temp",
-                "haul_off_temp", "haul_off_follower_rpm", "strip_width_mm"
+                "haul_off_temp", "haul_off_follower_rpm"
             ],
             order_by: "creation desc",
             limit: 1

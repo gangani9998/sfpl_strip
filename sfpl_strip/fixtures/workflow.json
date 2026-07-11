@@ -123,7 +123,7 @@
   "document_type": "Strip Work Schedule",
   "enable_action_confirmation": 0,
   "is_active": 1,
-  "modified": "2026-07-04 12:22:57.876961",
+  "modified": "2026-07-11 09:22:15.344539",
   "name": "Strip Work Schedule Workflow",
   "override_status": 0,
   "send_email_alert": 0,
@@ -159,7 +159,7 @@
    {
     "allow_edit": "System Manager",
     "avoid_status_override": 0,
-    "doc_status": "0",
+    "doc_status": "1",
     "evaluate_as_expression": 0,
     "is_optional_state": 0,
     "message": null,
@@ -173,7 +173,7 @@
    {
     "allow_edit": "System Manager",
     "avoid_status_override": 0,
-    "doc_status": "0",
+    "doc_status": "1",
     "evaluate_as_expression": 0,
     "is_optional_state": 0,
     "message": null,
@@ -187,7 +187,7 @@
    {
     "allow_edit": "System Manager",
     "avoid_status_override": 0,
-    "doc_status": "0",
+    "doc_status": "1",
     "evaluate_as_expression": 0,
     "is_optional_state": 0,
     "message": null,
@@ -224,6 +224,20 @@
     "state": "Job Complete",
     "update_field": null,
     "update_value": null,
+    "workflow_builder_id": null
+   },
+   {
+    "allow_edit": "All",
+    "avoid_status_override": 0,
+    "doc_status": "2",
+    "evaluate_as_expression": 0,
+    "is_optional_state": 0,
+    "message": null,
+    "next_action_email_template": null,
+    "send_email": 1,
+    "state": "Cancelled",
+    "update_field": "",
+    "update_value": "",
     "workflow_builder_id": null
    }
   ],
@@ -304,10 +318,54 @@
     "state": "Under Production",
     "transition_tasks": null,
     "workflow_builder_id": null
+   },
+   {
+    "action": "Cancel",
+    "allow_self_approval": 1,
+    "allowed": "All",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Approved",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Cancel",
+    "allow_self_approval": 1,
+    "allowed": "All",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Waiting",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Cancel",
+    "allow_self_approval": 1,
+    "allowed": "All",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Drawing",
+    "transition_tasks": null,
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Cancel",
+    "allow_self_approval": 1,
+    "allowed": "All",
+    "condition": null,
+    "next_state": "Cancelled",
+    "send_email_to_creator": 0,
+    "state": "Under Production",
+    "transition_tasks": null,
+    "workflow_builder_id": null
    }
   ],
   "workflow_data": null,
   "workflow_name": "Strip Work Schedule Workflow",
-  "workflow_state_field": "production_status"
+  "workflow_state_field": "workflow_state"
  }
 ]

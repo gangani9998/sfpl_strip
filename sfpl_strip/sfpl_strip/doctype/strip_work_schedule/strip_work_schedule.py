@@ -9,7 +9,17 @@ class StripWorkSchedule(Document):
         self.validate_single_active_constraint()
         self.validate_coating_ratios()
         self.validate_targets()
+        self.validate_wastage_requirement()
         self.check_mtc_gate()
+
+    def validate_wastage_requirement(self):
+        if self.workflow_state == "Job Complete":
+            # Check if there are any submitted production entries
+            has_production = frappe.db.exists("Strip Production Entry", {"strip_work_schedule": self.name, "docstatus": 1})
+            if has_production:
+                total_wastage = sum([frappe.utils.flt(row.wastage_qty) for row in self.get("wastage_entries")])
+                if total_wastage <= 0:
+                    frappe.throw("Wastage is compulsory. You must log wastage entry since Production Entries exist for this schedule.")
 
     def on_cancel(self):
         # Prevent cancellation if there are active Production Entries
@@ -58,14 +68,6 @@ class StripWorkSchedule(Document):
     def check_mtc_gate(self):
         if self.workflow_state == "Job Complete":
             # Just a placeholder for MTC gate check, will expand when MTCs are built
-            has_mtc = frappe.get_all(
-                "GS MTC",
-                filters={"lot_no": self.name, "docstatus": 1}
-            )
-            has_ps_mtc = frappe.get_all(
-                "PS MTC",
-                filters={"lot_no": self.name, "docstatus": 1}
-            )
             pass
 
     def onload(self):
@@ -77,6 +79,7 @@ class StripWorkSchedule(Document):
 
     def on_update_after_submit(self):
         if self.workflow_state == "Job Complete":
+            self.validate_wastage_requirement()
             if not self.wastage_posted:
                 self.post_wastage_entry()
             else:

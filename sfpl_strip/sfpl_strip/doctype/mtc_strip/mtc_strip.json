@@ -1,0 +1,219 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-04 12:30:50.469325",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "standard_and_condition_sec",
+  "posting_date",
+  "is_standard",
+  "test_standard",
+  "col_break_1",
+  "posting_time",
+  "temperature",
+  "humidity",
+  "sample_details_sec",
+  "product_name",
+  "lot_no",
+  "col_break_2",
+  "roll_no",
+  "roll_width",
+  "utm_reading_sec",
+  "specimen_data",
+  "mean_value_sec",
+  "mean_tensile_strength",
+  "col_break_3",
+  "mean_elongation_designated",
+  "col_break_4",
+  "mean_elongation_ultimate",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "MTC-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Naming Series",
+   "options": "MTC-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "lot_no",
+   "fieldtype": "Link",
+   "label": "Batch No.",
+   "options": "Strip Work Schedule",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "roll_no",
+   "fieldtype": "Link",
+   "label": "Roll No.",
+   "options": "Strip Production Entry",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "MTC Strip",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "standard_and_condition_sec",
+   "fieldtype": "Section Break",
+   "label": "Standard and Condition"
+  },
+  {
+   "fieldname": "is_standard",
+   "fieldtype": "Data",
+   "label": "IS Standard"
+  },
+  {
+   "fieldname": "test_standard",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Test Standard",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Posting Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "temperature",
+   "fieldtype": "Float",
+   "label": "Temperature (\u00b0C)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "humidity",
+   "fieldtype": "Float",
+   "label": "Humidity(%RH)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sample_details_sec",
+   "fieldtype": "Section Break",
+   "label": "Sample Details"
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Link",
+   "label": "Product Name",
+   "options": "Item",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "roll_width",
+   "fieldtype": "Float",
+   "label": "Strip Width (mm)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "utm_reading_sec",
+   "fieldtype": "Section Break",
+   "label": "UTM Reading"
+  },
+  {
+   "fieldname": "specimen_data",
+   "fieldtype": "Table",
+   "label": "Specimen Data",
+   "options": "U Specimen Data"
+  },
+  {
+   "fieldname": "mean_value_sec",
+   "fieldtype": "Section Break",
+   "label": "Mean Value"
+  },
+  {
+   "fieldname": "mean_tensile_strength",
+   "fieldtype": "Float",
+   "label": "Tensile Strenth (kN/Mtr)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "mean_elongation_designated",
+   "fieldtype": "Float",
+   "label": "Elongation at designated (%)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "mean_elongation_ultimate",
+   "fieldtype": "Float",
+   "label": "Elongation at Ultimate (%)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "col_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "col_break_4",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-07-09 15:12:58.798841",
+ "modified_by": "Administrator",
+ "module": "SFPL Strip",
+ "name": "MTC Strip",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

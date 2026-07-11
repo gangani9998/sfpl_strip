@@ -11,19 +11,20 @@
   "naming_series",
   "strip_work_schedule",
   "strip_product_code",
+  "standard_strip_width",
+  "target_glm",
   "col_break_1",
   "posting_date",
   "posting_time",
-  "strip_width_mm",
   "barcode",
   "dim_section",
-  "roll_length",
   "roll_gross_weight",
-  "col_break_2",
-  "papertube_weight",
+  "total_packaging_weight",
   "roll_net_weight",
+  "col_break_2",
+  "roll_length",
+  "actual_strip_width",
   "params_section",
-  "extruder_rpm",
   "barrel_z1",
   "barrel_z2",
   "barrel_z3",
@@ -32,17 +33,18 @@
   "col_break_3",
   "die_z1",
   "die_z2",
+  "extruder_rpm",
   "haul_off_rpm",
-  "haul_off_temp",
-  "haul_off_follower_rpm",
   "water_temp",
+  "amended_from",
   "bom_tab",
-  "gsm",
-  "yarn_details",
-  "coating_details",
   "total_yarn_weight",
   "total_coating_weight",
-  "amended_from"
+  "yarn_details",
+  "coating_details",
+  "haul_off_temp",
+  "haul_off_follower_rpm",
+  "gsm"
  ],
  "fields": [
   {
@@ -92,12 +94,18 @@
   {
    "fieldname": "dim_section",
    "fieldtype": "Section Break",
-   "label": "Roll Dimensions"
+   "label": "Strip and roll Details"
   },
   {
    "fieldname": "roll_length",
    "fieldtype": "Float",
    "label": "Roll Length (m)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_strip_width",
+   "fieldtype": "Float",
+   "label": "Actual Strip Width (mm)",
    "reqd": 1
   },
   {
@@ -111,9 +119,9 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "papertube_weight",
+   "fieldname": "total_packaging_weight",
    "fieldtype": "Float",
-   "label": "Paper Tube Weight (kg)",
+   "label": "Total Packaging Weight (kg)",
    "reqd": 1
   },
   {
@@ -246,22 +254,43 @@
    "read_only": 1
   },
   {
-   "fieldname": "strip_width_mm",
+   "fieldname": "target_glm",
    "fieldtype": "Float",
-   "label": "Strip Width (mm)",
-   "reqd": 1
+   "label": "Target GLM (g/m)",
+   "read_only": 1,
+   "fetch_from": "strip_work_schedule.target_gsm"
+  },
+  {
+   "fieldname": "standard_strip_width",
+   "fieldtype": "Float",
+   "label": "Standard Strip Width(mm)",
+   "reqd": 0,
+   "read_only": 1,
+   "fetch_from": "strip_work_schedule.standard_strip_width"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-06 16:59:26.062289",
+ "modified": "2026-07-10 12:30:00.000000",
  "modified_by": "Administrator",
  "module": "SFPL Strip",
  "name": "Strip Production Entry",
  "owner": "Administrator",
  "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
   {
    "create": 1,
    "delete": 1,

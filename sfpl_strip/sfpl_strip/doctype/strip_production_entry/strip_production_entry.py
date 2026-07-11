@@ -15,9 +15,21 @@ class StripProductionEntry(Document):
             if ws.docstatus != 1 or ws.workflow_state != "Under Production":
                 frappe.throw(f"Production Entries can only be created against Work Schedules that are 'Under Production'. The selected Work Schedule {ws.name} is currently '{ws.workflow_state}'.")
                 
+        if flt(self.roll_gross_weight) > 50:
+            frappe.throw("Roll Gross Weight cannot be greater than 50 kg.")
+            
+        if flt(self.roll_gross_weight) < 1:
+            frappe.throw("Roll Gross Weight cannot be less than 1 kg.")
+                
+        if flt(self.total_packaging_weight) >= flt(self.roll_gross_weight):
+            frappe.throw("Total Packaging Weight cannot be greater than or equal to Roll Gross Weight.")
+            
+        if flt(self.actual_strip_width) > 100:
+            frappe.throw("Actual Strip Width (mm) cannot be greater than 100 mm.")
+
         # Fallback math (will be updated side-by-side with user)
         if not self.roll_net_weight:
-            self.roll_net_weight = flt(self.roll_gross_weight) - flt(self.papertube_weight)
+            self.roll_net_weight = flt(self.roll_gross_weight) - flt(self.total_packaging_weight)
             
     def on_update(self):
         # Generate Barcode value on first save (when name is available)

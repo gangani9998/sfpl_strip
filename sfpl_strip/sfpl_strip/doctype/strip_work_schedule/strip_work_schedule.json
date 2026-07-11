@@ -16,22 +16,19 @@
   "column_break_schedule",
   "die_no",
   "sizer_no",
+  "standard_strip_width",
   "target_gsm",
   "warp_data_section",
   "warp_data",
+  "default_coating_ratios",
+  "wastage_entries",
   "section_break_ts",
   "strip_tensile_strength",
+  "default_paper_tube",
+  "wastage_qty",
   "column_break_ts",
   "strip_tensile_strength_kg",
-  "section_break_coating",
-  "default_coating_ratios",
-  "col_break_coating_1",
-  "default_paper_tube",
-  "col_break_coating_2",
   "wastage_item",
-  "wastage_section",
-  "wastage_entries",
-  "wastage_qty",
   "amended_from",
   "production_analysis_tab",
   "batch_production_meter",
@@ -59,7 +56,7 @@
   {
    "fieldname": "default_coating_ratios",
    "fieldtype": "Table",
-   "label": "Default Coating Ratios",
+   "label": "Coating Polymer Ratio",
    "options": "Strip Coating Ratio"
   },
   {
@@ -80,21 +77,15 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "wastage_section",
-   "fieldtype": "Section Break",
-   "label": "Log Event Wastage"
-  },
-  {
-   "allow_on_submit": 1,
    "fieldname": "wastage_item",
    "fieldtype": "Link",
    "label": "Wastage/Scrap Item",
-   "mandatory_depends_on": "eval:doc.workflow_state=='Job Complete'",
    "options": "Item",
    "reqd": 1
   },
   {
    "allow_on_submit": 1,
+   "depends_on": "eval:in_list(['Under Production', 'Job Complete'], doc.workflow_state)",
    "fieldname": "wastage_qty",
    "fieldtype": "Float",
    "label": "Total Wastage Quantity (Kg)",
@@ -104,13 +95,14 @@
   {
    "fieldname": "warp_data",
    "fieldtype": "Table",
-   "label": "Warp Data",
-   "options": "Strip Yarn Data"
+   "label": "Yarn Data",
+   "options": "Strip Yarn Data",
+   "hide_label": 1
   },
   {
    "fieldname": "warp_data_section",
    "fieldtype": "Section Break",
-   "label": "Warp Data"
+   "label": "BOM Data"
   },
   {
    "fieldname": "strip_tensile_strength",
@@ -176,13 +168,9 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_coating",
-   "fieldtype": "Section Break",
-   "label": "Coating Data"
-  },
-  {
    "fieldname": "section_break_ts",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hide_border": 1
   },
   {
    "fieldname": "production_analysis_tab",
@@ -264,7 +252,8 @@
    "fieldname": "wastage_entries",
    "fieldtype": "Table",
    "label": "Wastage Log",
-   "options": "Strip Wastage Entry"
+   "options": "Strip Wastage Entry",
+   "read_only_depends_on": "eval:doc.docstatus == 0"
   },
   {
    "allow_on_submit": 1,
@@ -275,19 +264,17 @@
    "label": "Wastage Posted"
   },
   {
-   "fieldname": "col_break_coating_1",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "col_break_coating_2",
-   "fieldtype": "Column Break"
+   "fieldname": "standard_strip_width",
+   "fieldtype": "Float",
+   "label": "Standard Strip Width (mm)",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-08 16:29:08.267019",
+ "modified": "2026-07-10 14:02:00.000000",
  "modified_by": "Administrator",
  "module": "SFPL Strip",
  "name": "Strip Work Schedule",

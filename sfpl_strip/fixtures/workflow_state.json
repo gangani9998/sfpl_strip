@@ -106,5 +106,14 @@
   "name": "Job Complete",
   "style": "",
   "workflow_state_name": "Job Complete"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-07-10 19:10:26.366041",
+  "name": "Cancelled",
+  "style": "",
+  "workflow_state_name": "Cancelled"
  }
 ]
