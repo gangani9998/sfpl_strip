@@ -53,7 +53,7 @@ frappe.ui.form.on("Strip Work Schedule", {
             frm.set_df_property('wastage_section', 'hidden', 0);
         }
 
-        if (frm.doc.workflow_state === "Under Production") {
+        if (frm.doc.workflow_state === "Under Production" || frm.doc.workflow_state === "Under production") {
             frm.add_custom_button(__("Add Strip Production Entry"), function() {
                 frappe.new_doc('Strip Production Entry', {
                     strip_work_schedule: frm.doc.name
@@ -69,7 +69,7 @@ frappe.ui.form.on("Strip Work Schedule", {
         }
         
         if (frm.doc.docstatus === 1) {
-            if (frm.doc.workflow_state !== 'Under Production') {
+            if (frm.doc.workflow_state !== 'Under Production' && frm.doc.workflow_state !== 'Under production') {
                 frm.set_df_property('wastage_entries', 'read_only', 1);
             }
             setTimeout(() => {
