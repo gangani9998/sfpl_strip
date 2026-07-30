@@ -58,11 +58,16 @@ class StripWorkSchedule(Document):
                 filters={
                     "extrusion_line": self.extrusion_line,
                     "workflow_state": ["in", ["Drawing", "Under Production", "Under production"]],
-                    "name": ["!=", self.name]
-                }
+                    "name": ["!=", self.name],
+                    "docstatus": ["!=", 2]
+                },
+                fields=["name", "workflow_state"]
             )
             if existing:
-                frappe.throw(f"Extrusion Line {self.extrusion_line} is already occupied by another Work Schedule in Drawing/Production state.")
+                frappe.throw(
+                    f"Extrusion Line '{self.extrusion_line}' is already occupied by Work Schedule '{existing[0].name}' "
+                    f"(State: {existing[0].workflow_state}). You must complete or cancel '{existing[0].name}' before starting a new job on this line."
+                )
                 
         # Validate that if status is Job Complete, there must be wastage recorded (if needed)
     def check_mtc_gate(self):
@@ -78,6 +83,7 @@ class StripWorkSchedule(Document):
         pass
 
     def on_update_after_submit(self):
+        self.validate_single_active_constraint()
         if self.get("workflow_state") == "Job Complete":
             self.validate_wastage_requirement()
             if not self.wastage_posted:
