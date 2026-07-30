@@ -2,12 +2,13 @@
  "actions": [],
  "allow_bulk_edit": 1,
  "allow_rename": 1,
- "autoname": "SWS-.YYYY.-.#####",
+ "autoname": "naming_series:",
  "creation": "2026-07-04 12:06:08.318172",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "schedule_section",
   "extrusion_line",
   "quality",
@@ -45,6 +46,14 @@
   "created_on"
  ],
  "fields": [
+  {
+   "default": "SWS-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "SWS-.YYYY.-.#####\\nSWS-.YY.-.####",
+   "reqd": 1
+  },
   {
    "fieldname": "extrusion_line",
    "fieldtype": "Link",
@@ -95,9 +104,9 @@
   {
    "fieldname": "warp_data",
    "fieldtype": "Table",
+   "hide_label": 1,
    "label": "Yarn Data",
-   "options": "Strip Yarn Data",
-   "hide_label": 1
+   "options": "Strip Yarn Data"
   },
   {
    "fieldname": "warp_data_section",
