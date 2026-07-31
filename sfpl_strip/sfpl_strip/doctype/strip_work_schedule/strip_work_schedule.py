@@ -52,12 +52,12 @@ class StripWorkSchedule(Document):
             if total_ratio != 100.0:
                 frappe.throw(f"Total Coating Ratio must be exactly 100%. Currently it is {total_ratio}%")
     def validate_single_active_constraint(self):
-        if self.get("workflow_state") in ["Drawing", "Under Production", "Under production"]:
+        if self.get("workflow_state") in ["Under Production", "Under production"]:
             existing = frappe.get_all(
                 "Strip Work Schedule",
                 filters={
                     "extrusion_line": self.extrusion_line,
-                    "workflow_state": ["in", ["Drawing", "Under Production", "Under production"]],
+                    "workflow_state": ["in", ["Under Production", "Under production"]],
                     "name": ["!=", self.name],
                     "docstatus": ["!=", 2]
                 },
