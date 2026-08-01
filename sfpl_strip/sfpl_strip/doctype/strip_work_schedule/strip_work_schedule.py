@@ -197,7 +197,7 @@ class StripWorkSchedule(Document):
         # Mark as posted
         self.db_set("wastage_posted", 1)
 
-    def update_production_analysis(self):
+    def update_production_analysis(self, save=False):
         entries = frappe.get_all("Strip Production Entry", 
             filters={"strip_work_schedule": self.name, "docstatus": ["<", 2]},
             fields=["name", "docstatus", "roll_length", "total_yarn_weight", "total_coating_weight", "roll_net_weight", "gsm"]
@@ -253,5 +253,14 @@ class StripWorkSchedule(Document):
         else:
             self.average_gsm = 0.0
             
-        # If it's loaded, we shouldn't save unless it changed, but onload doesn't save to DB.
-        # To persist this, we also call this method from Strip Production Entry's hooks.
+        if save and self.name and not self.is_new():
+            frappe.db.set_value("Strip Work Schedule", self.name, {
+                "batch_production_meter": self.batch_production_meter,
+                "submitted_production_meter": self.submitted_production_meter,
+                "draft_production_meter": self.draft_production_meter,
+                "total_produced_meter": self.total_produced_meter,
+                "remain_production_meter": self.remain_production_meter,
+                "total_roll": self.total_roll,
+                "yarn_coating_ratio": self.yarn_coating_ratio,
+                "average_gsm": self.average_gsm
+            }, update_modified=False)

@@ -47,16 +47,13 @@ class StripProductionEntry(Document):
     def on_cancel(self):
         self.update_work_schedule_analysis()
         
-    def on_trash(self):
+    def after_delete(self):
         self.update_work_schedule_analysis()
         
     def update_work_schedule_analysis(self):
-        if self.strip_work_schedule:
+        if self.strip_work_schedule and frappe.db.exists("Strip Work Schedule", self.strip_work_schedule):
             ws = frappe.get_doc("Strip Work Schedule", self.strip_work_schedule)
-            ws.update_production_analysis()
-            # Disable validation on this background save to avoid triggering MTC or state logic errors
-            ws.flags.ignore_validate = True
-            ws.save(ignore_permissions=True)
+            ws.update_production_analysis(save=True)
 
     def create_batch(self):
         # Ensure the Item is configured for batches
