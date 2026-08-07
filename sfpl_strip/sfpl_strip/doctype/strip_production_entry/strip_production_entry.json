@@ -121,7 +121,7 @@
   {
    "fieldname": "total_packaging_weight",
    "fieldtype": "Float",
-   "label": "Total Packaging Weight (kg)",
+   "label": "Total Packaging Weight (g)",
    "reqd": 1
   },
   {
@@ -188,7 +188,7 @@
   {
    "fieldname": "haul_off_rpm",
    "fieldtype": "Float",
-   "label": "Haul-Off RPM"
+   "label": "Haul-Off Speed"
   },
   {
    "fieldname": "haul_off_temp",
@@ -198,7 +198,7 @@
   {
    "fieldname": "haul_off_follower_rpm",
    "fieldtype": "Float",
-   "label": "Haul-Off Follower RPM"
+   "label": "Haul-Off Follower Speed"
   },
   {
    "fieldname": "amended_from",
@@ -273,7 +273,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-07 16:00:00.000000",
+ "modified": "2026-08-07 18:40:00.000000",
  "modified_by": "Administrator",
  "module": "SFPL Strip",
  "name": "Strip Production Entry",

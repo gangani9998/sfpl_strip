@@ -128,21 +128,25 @@ function calculate_net_weight(frm) {
         gross = 0;
     }
     
-    if (gross > 0 && tube >= gross) {
-        frappe.msgprint({
-            title: __('Validation Error'),
-            indicator: 'red',
-            message: __('Total Packaging Weight cannot be greater than or equal to Roll Gross Weight.')
-        });
-        frappe.model.set_value(frm.doctype, frm.docname, 'total_packaging_weight', 0);
-        tube = 0;
+    if (gross > 0 && tube > 0) {
+        if ((tube / 1000) >= gross) {
+            frappe.msgprint({
+                title: __('Invalid Weight'),
+                indicator: 'red',
+                message: __('Total Packaging Weight cannot be greater than or equal to Roll Gross Weight.')
+            });
+            frappe.model.set_value(frm.doctype, frm.docname, 'total_packaging_weight', 0);
+            return;
+        }
+        let net = gross - (tube / 1000);
+        if (net < 0) net = 0;
+        frm.set_value('roll_net_weight', net);
+    } else {
+        frm.set_value('roll_net_weight', gross);
     }
     
-    let net = gross - tube;
-    if (net < 0) net = 0;
-    frm.set_value('roll_net_weight', net);
-    
     let roll_length = flt(frm.doc.roll_length);
+    let net = flt(frm.doc.roll_net_weight);
     if (roll_length > 0) {
         let gsm = (net / roll_length) * 1000;
         frm.set_value('gsm', gsm);

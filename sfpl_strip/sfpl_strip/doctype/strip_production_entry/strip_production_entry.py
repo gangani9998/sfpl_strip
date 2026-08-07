@@ -21,15 +21,19 @@ class StripProductionEntry(Document):
         if flt(self.roll_gross_weight) < 1:
             frappe.throw("Roll Gross Weight cannot be less than 1 kg.")
                 
-        if flt(self.total_packaging_weight) >= flt(self.roll_gross_weight):
+        if (flt(self.total_packaging_weight) / 1000) >= flt(self.roll_gross_weight):
             frappe.throw("Total Packaging Weight cannot be greater than or equal to Roll Gross Weight.")
             
         if flt(self.actual_strip_width) > 100:
             frappe.throw("Actual Strip Width (mm) cannot be greater than 100 mm.")
 
-        # Fallback math (will be updated side-by-side with user)
-        if not self.roll_net_weight:
-            self.roll_net_weight = flt(self.roll_gross_weight) - flt(self.total_packaging_weight)
+        self.calculate_weights()
+            
+    def calculate_weights(self):
+        """Calculate net weight and meters"""
+        # Net Weight = Gross - Packaging (now packaging is in grams)
+        if self.roll_gross_weight and self.total_packaging_weight is not None:
+            self.roll_net_weight = flt(self.roll_gross_weight) - (flt(self.total_packaging_weight) / 1000)
             
     def on_update(self):
         # Generate Barcode value on first save (when name is available)
