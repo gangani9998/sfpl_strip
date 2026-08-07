@@ -28,6 +28,13 @@ frappe.ui.form.on("Strip Production Entry", {
         barcode_wrapper.find('.control-value').hide();
         barcode_wrapper.find('input').hide();
         
+        // Hide the barcode entirely if it's a new, unsaved document
+        if (frm.is_new()) {
+            frm.set_df_property('barcode', 'hidden', 1);
+        } else {
+            frm.set_df_property('barcode', 'hidden', 0);
+        }
+        
         // Filter Product Code field to only show Items marked as Quality Item
         frm.set_query("strip_product_code", function () {
             return {

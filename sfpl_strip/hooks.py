@@ -133,7 +133,8 @@ after_install = "sfpl_strip.install.after_install"
 # Permissions evaluated in scripted ways
 
 permission_query_conditions = {
-	"Strip Work Schedule": "sfpl_strip.custom_query.get_strip_work_schedule"
+	"Strip Work Schedule": "sfpl_strip.custom_query.get_strip_work_schedule",
+	"Item": "sfpl_strip.custom_query.get_strip_item"
 }
 #
 # has_permission = {

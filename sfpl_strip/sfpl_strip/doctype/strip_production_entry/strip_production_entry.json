@@ -30,20 +30,20 @@
   "barrel_z3",
   "barrel_z4",
   "barrel_z5",
+  "extruder_rpm",
   "col_break_3",
   "die_z1",
   "die_z2",
-  "extruder_rpm",
-  "haul_off_rpm",
   "water_temp",
+  "haul_off_rpm",
+  "haul_off_temp",
+  "haul_off_follower_rpm",
   "amended_from",
   "bom_tab",
   "total_yarn_weight",
   "total_coating_weight",
   "yarn_details",
   "coating_details",
-  "haul_off_temp",
-  "haul_off_follower_rpm",
   "gsm"
  ],
  "fields": [
@@ -139,27 +139,32 @@
   {
    "fieldname": "barrel_z1",
    "fieldtype": "Float",
-   "label": "Barrel Zone 1 Temp"
+   "label": "Barrel Zone 1 Temperature (\u00b0C)"
   },
   {
    "fieldname": "barrel_z2",
    "fieldtype": "Float",
-   "label": "Barrel Zone 2 Temp"
+   "label": "Barrel Zone 2 Temperature (\u00b0C)"
   },
   {
    "fieldname": "barrel_z3",
    "fieldtype": "Float",
-   "label": "Barrel Zone 3 Temp"
+   "label": "Barrel Zone 3 Temperature (\u00b0C)"
   },
   {
    "fieldname": "barrel_z4",
    "fieldtype": "Float",
-   "label": "Barrel Zone 4 Temp"
+   "label": "Barrel Zone 4 Temperature (\u00b0C)"
   },
   {
    "fieldname": "barrel_z5",
    "fieldtype": "Float",
-   "label": "Barrel Zone 5 Temp"
+   "label": "Barrel Zone 5 Temperature (\u00b0C)"
+  },
+  {
+   "fieldname": "extruder_rpm",
+   "fieldtype": "Float",
+   "label": "Extruder RPM"
   },
   {
    "fieldname": "col_break_3",
@@ -168,17 +173,17 @@
   {
    "fieldname": "die_z1",
    "fieldtype": "Float",
-   "label": "Die Zone 1 Temp"
+   "label": "Die Zone 1 Temperature (\u00b0C)"
   },
   {
    "fieldname": "die_z2",
    "fieldtype": "Float",
-   "label": "Die Zone 2 Temp"
+   "label": "Die Zone 2 Temperature (\u00b0C)"
   },
   {
-   "fieldname": "extruder_rpm",
+   "fieldname": "water_temp",
    "fieldtype": "Float",
-   "label": "Extruder RPM"
+   "label": "Water Temperature (\u00b0C)"
   },
   {
    "fieldname": "haul_off_rpm",
@@ -186,9 +191,14 @@
    "label": "Haul-Off RPM"
   },
   {
-   "fieldname": "water_temp",
+   "fieldname": "haul_off_temp",
    "fieldtype": "Float",
-   "label": "Water Temp"
+   "label": "Haul-Off Temperature (\u00b0C)"
+  },
+  {
+   "fieldname": "haul_off_follower_rpm",
+   "fieldtype": "Float",
+   "label": "Haul-Off Follower RPM"
   },
   {
    "fieldname": "amended_from",
@@ -238,16 +248,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "haul_off_temp",
-   "fieldtype": "Float",
-   "label": "Haul-Off Temp"
-  },
-  {
-   "fieldname": "haul_off_follower_rpm",
-   "fieldtype": "Float",
-   "label": "Haul-Off Follower RPM"
-  },
-  {
    "fieldname": "gsm",
    "fieldtype": "Float",
    "label": "GLM (g/m)",
@@ -273,7 +273,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-10 12:30:00.000000",
+ "modified": "2026-08-07 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "SFPL Strip",
  "name": "Strip Production Entry",
