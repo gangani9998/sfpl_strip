@@ -46,11 +46,15 @@ frappe.ui.form.on("Strip Work Schedule", {
             };
         });
         
-        // Hide wastage section entirely if the schedule is in Draft (Drawing) state
+        // Hide wastage section and batch calculator if the schedule is in Draft (Drawing) state
         if (frm.doc.docstatus === 0) {
             frm.set_df_property('wastage_section', 'hidden', 1);
+            frm.set_df_property('mixing_batch_size', 'hidden', 1);
+            frm.fields_dict['default_coating_ratios'].grid.update_docfield_property('qty_kg', 'hidden', 1);
         } else {
             frm.set_df_property('wastage_section', 'hidden', 0);
+            frm.set_df_property('mixing_batch_size', 'hidden', 0);
+            frm.fields_dict['default_coating_ratios'].grid.update_docfield_property('qty_kg', 'hidden', 0);
         }
 
         if (frm.doc.workflow_state === "Under Production" || frm.doc.workflow_state === "Under production") {
@@ -154,12 +158,40 @@ frappe.ui.form.on("Strip Work Schedule", {
 
     wastage_entries_remove: function(frm) {
         calculate_total_wastage(frm);
+    },
+    
+    mixing_batch_size: function(frm) {
+        if (frm.doc.mixing_batch_size && frm.doc.default_coating_ratios) {
+            let batch = flt(frm.doc.mixing_batch_size);
+            frm.doc.default_coating_ratios.forEach(d => {
+                let qty = batch * (flt(d.ratio) / 100);
+                frappe.model.set_value(d.doctype, d.name, 'qty_kg', qty);
+            });
+        }
     }
 });
 
 frappe.ui.form.on("Strip Wastage Entry", {
     wastage_qty: function(frm) {
         calculate_total_wastage(frm);
+    }
+});
+
+frappe.ui.form.on("Strip Coating Ratio", {
+    qty_kg: function(frm, cdt, cdn) {
+        let row = frappe.get_doc(cdt, cdn);
+        if (row.qty_kg && row.ratio) {
+            let total_batch = flt(row.qty_kg) / (flt(row.ratio) / 100);
+            frm.set_value('mixing_batch_size', total_batch);
+            
+            // Recalculate other rows
+            frm.doc.default_coating_ratios.forEach(d => {
+                if (d.name !== row.name) {
+                    let qty = total_batch * (flt(d.ratio) / 100);
+                    frappe.model.set_value(d.doctype, d.name, 'qty_kg', qty);
+                }
+            });
+        }
     }
 });
 

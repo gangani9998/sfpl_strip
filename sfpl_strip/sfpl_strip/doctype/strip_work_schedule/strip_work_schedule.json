@@ -21,16 +21,19 @@
   "target_gsm",
   "warp_data_section",
   "warp_data",
+  "mixing_batch_size",
   "default_coating_ratios",
   "wastage_entries",
+  "wastage_item",
+  "default_paper_tube",
   "section_break_ts",
   "strip_tensile_strength",
-  "default_paper_tube",
   "wastage_qty",
   "column_break_ts",
   "strip_tensile_strength_kg",
-  "wastage_item",
   "amended_from",
+  "section_break_remark",
+  "any_remark",
   "production_analysis_tab",
   "batch_production_meter",
   "submitted_production_meter",
@@ -63,10 +66,17 @@
    "reqd": 1
   },
   {
+   "fieldname": "mixing_batch_size",
+   "fieldtype": "Float",
+   "label": "Mixing Batch Size Calculator (Kg)",
+   "allow_on_submit": 1
+  },
+  {
    "fieldname": "default_coating_ratios",
    "fieldtype": "Table",
    "label": "Coating Polymer Ratio",
-   "options": "Strip Coating Ratio"
+   "options": "Strip Coating Ratio",
+   "allow_on_submit": 1
   },
   {
    "fieldname": "schedule_section",
@@ -84,13 +94,6 @@
   {
    "fieldname": "column_break_schedule",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "wastage_item",
-   "fieldtype": "Link",
-   "label": "Wastage/Scrap Item",
-   "options": "Item",
-   "reqd": 1
   },
   {
    "allow_on_submit": 1,
@@ -182,6 +185,16 @@
    "hide_border": 1
   },
   {
+   "fieldname": "section_break_remark",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "fieldname": "any_remark",
+   "fieldtype": "Small Text",
+   "label": "Any Remark"
+  },
+  {
    "fieldname": "production_analysis_tab",
    "fieldtype": "Tab Break",
    "label": "Production Analysis"
@@ -251,18 +264,25 @@
    "read_only": 1
   },
   {
-   "fieldname": "default_paper_tube",
-   "fieldtype": "Link",
-   "label": "Paper Tube (Packing Material)",
-   "options": "Item"
-  },
-  {
    "allow_on_submit": 1,
    "fieldname": "wastage_entries",
    "fieldtype": "Table",
    "label": "Wastage Log",
    "options": "Strip Wastage Entry",
    "read_only_depends_on": "eval:doc.docstatus == 0"
+  },
+  {
+   "fieldname": "wastage_item",
+   "fieldtype": "Link",
+   "label": "Wastage/Scrap Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_paper_tube",
+   "fieldtype": "Link",
+   "label": "Paper Tube (Packing Material)",
+   "options": "Item"
   },
   {
    "allow_on_submit": 1,
@@ -283,7 +303,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-10 14:02:00.000000",
+ "modified": "2026-08-07 18:10:00.000000",
  "modified_by": "Administrator",
  "module": "SFPL Strip",
  "name": "Strip Work Schedule",
