@@ -46,15 +46,11 @@ frappe.ui.form.on("Strip Work Schedule", {
             };
         });
         
-        // Hide wastage section and batch calculator if the schedule is in Draft (Drawing) state
+        // Hide wastage section if the schedule is in Draft (Drawing) state
         if (frm.doc.docstatus === 0) {
             frm.set_df_property('wastage_section', 'hidden', 1);
-            frm.set_df_property('mixing_batch_size', 'hidden', 1);
-            frm.fields_dict['default_coating_ratios'].grid.update_docfield_property('qty_kg', 'hidden', 1);
         } else {
             frm.set_df_property('wastage_section', 'hidden', 0);
-            frm.set_df_property('mixing_batch_size', 'hidden', 0);
-            frm.fields_dict['default_coating_ratios'].grid.update_docfield_property('qty_kg', 'hidden', 0);
         }
 
         if (frm.doc.workflow_state === "Under Production" || frm.doc.workflow_state === "Under production") {
