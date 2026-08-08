@@ -263,4 +263,4 @@ class StripWorkSchedule(Document):
                 "total_roll": self.total_roll,
                 "yarn_coating_ratio": self.yarn_coating_ratio,
                 "average_gsm": self.average_gsm
-            }, update_modified=False)
+            }, update_modified=True)
