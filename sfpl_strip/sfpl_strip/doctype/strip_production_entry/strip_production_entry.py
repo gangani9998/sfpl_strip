@@ -44,6 +44,8 @@ class StripProductionEntry(Document):
         self.update_work_schedule_analysis()
             
     def on_submit(self):
+        self.db_set("remaining_length", flt(self.roll_length))
+        self.db_set("remaining_weight", flt(self.roll_net_weight))
         self.create_batch()
         self.make_manufacturing_entry()
         self.update_work_schedule_analysis()
@@ -131,3 +133,58 @@ class StripProductionEntry(Document):
         
         se.insert(ignore_permissions=True)
         se.submit()
+
+@frappe.whitelist()
+def make_sample_cut(entry_name, sample_length, purpose):
+    import frappe
+    from frappe.utils import flt
+    
+    doc = frappe.get_doc("Strip Production Entry", entry_name)
+    sample_length = flt(sample_length)
+    
+    if sample_length <= 0:
+        frappe.throw("Sample Length must be greater than 0")
+        
+    if sample_length > flt(doc.remaining_length):
+        frappe.throw(f"Sample length ({sample_length} m) cannot exceed the remaining length of the roll ({doc.remaining_length} m).")
+        
+    se = frappe.new_doc("Stock Entry")
+    se.stock_entry_type = "Material Issue"
+    se.purpose = "Material Issue"
+    se.company = frappe.defaults.get_user_default("Company")
+    
+    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
+    if not default_warehouse:
+        frappe.throw("Please set a Default Warehouse in Stock Settings.")
+        
+    if purpose == "Lab Testing":
+        expense_account = "Lab Testing - SFPL"
+    else:
+        expense_account = "Marketing Expenses - SFPL"
+        
+    company_doc = frappe.get_cached_doc("Company", se.company)
+    cost_center = company_doc.cost_center or frappe.defaults.get_user_default("Cost Center")
+        
+    se.append("items", {
+        "item_code": doc.strip_product_code,
+        "qty": sample_length,
+        "s_warehouse": default_warehouse,
+        "batch_no": doc.name,
+        "expense_account": expense_account,
+        "cost_center": cost_center
+    })
+    
+    se.insert(ignore_permissions=True)
+    se.submit()
+    
+    new_remaining_length = flt(doc.remaining_length) - sample_length
+    
+    if doc.gsm:
+        new_remaining_weight = (new_remaining_length * flt(doc.gsm)) / 1000.0
+    else:
+        new_remaining_weight = 0
+        
+    doc.db_set("remaining_length", new_remaining_length)
+    doc.db_set("remaining_weight", new_remaining_weight)
+    
+    return se.name

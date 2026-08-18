@@ -64,6 +64,78 @@ frappe.ui.form.on("Strip Production Entry", {
             });
 
             if (frm.doc.docstatus === 1) {
+                frm.add_custom_button(__("Draw Sample"), function() {
+                    let d = new frappe.ui.Dialog({
+                        title: 'Draw Sample',
+                        fields: [
+                            {
+                                label: 'Sample Length (m)',
+                                fieldname: 'sample_length',
+                                fieldtype: 'Float',
+                                reqd: 1
+                            },
+                            {
+                                label: 'Sample Weight (kg)',
+                                fieldname: 'sample_weight',
+                                fieldtype: 'Float',
+                                reqd: 1
+                            },
+                            {
+                                label: 'Purpose',
+                                fieldname: 'purpose',
+                                fieldtype: 'Select',
+                                options: ['Lab Testing', 'Customer Sample'],
+                                reqd: 1
+                            }
+                        ],
+                        primary_action_label: 'Draw Sample',
+                        primary_action: function(values) {
+                            frappe.call({
+                                method: 'sfpl_strip.sfpl_strip.doctype.strip_production_entry.strip_production_entry.make_sample_cut',
+                                args: {
+                                    entry_name: frm.doc.name,
+                                    sample_length: values.sample_length,
+                                    purpose: values.purpose
+                                },
+                                freeze: true,
+                                callback: function(r) {
+                                    if (r.message) {
+                                        frappe.msgprint(`Successfully created Stock Entry <a href="/app/stock-entry/${r.message}">${r.message}</a>`);
+                                        frm.reload_doc();
+                                        d.hide();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    
+                    let get_gsm = () => flt(frm.doc.gsm) || 0;
+                    
+                    d.fields_dict.sample_length.$input.on('input', function() {
+                        if ($(this).is(':focus')) {
+                            let len = flt($(this).val());
+                            let gsm = get_gsm();
+                            let weight = (len * gsm) / 1000;
+                            // Format to 3 decimal places for kg
+                            d.set_value('sample_weight', parseFloat(weight.toFixed(3)));
+                        }
+                    });
+                    
+                    d.fields_dict.sample_weight.$input.on('input', function() {
+                        if ($(this).is(':focus')) {
+                            let weight = flt($(this).val());
+                            let gsm = get_gsm();
+                            if (gsm > 0) {
+                                let len = (weight * 1000) / gsm;
+                                // Format to 2 decimal places for meters
+                                d.set_value('sample_length', parseFloat(len.toFixed(2)));
+                            }
+                        }
+                    });
+
+                    d.show();
+                }).addClass("btn-danger");
+
                 frm.add_custom_button(__("Open Batch"), function() {
                     frappe.set_route('Form', 'Batch', frm.doc.name);
                 });

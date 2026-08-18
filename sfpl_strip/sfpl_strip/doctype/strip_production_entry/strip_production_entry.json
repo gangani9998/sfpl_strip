@@ -21,8 +21,10 @@
   "roll_gross_weight",
   "total_packaging_weight",
   "roll_net_weight",
+  "remaining_weight",
   "col_break_2",
   "roll_length",
+  "remaining_length",
   "actual_strip_width",
   "params_section",
   "barrel_z1",
@@ -267,6 +269,18 @@
    "reqd": 0,
    "read_only": 1,
    "fetch_from": "strip_work_schedule.standard_strip_width"
+  },
+  {
+   "fieldname": "remaining_length",
+   "fieldtype": "Float",
+   "label": "Remaining Length (m)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remaining_weight",
+   "fieldtype": "Float",
+   "label": "Remaining Net Weight (kg)",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
