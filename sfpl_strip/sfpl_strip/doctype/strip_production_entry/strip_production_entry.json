@@ -22,6 +22,7 @@
   "total_packaging_weight",
   "roll_net_weight",
   "remaining_weight",
+  "draw_sample_btn",
   "col_break_2",
   "roll_length",
   "remaining_length",
@@ -281,6 +282,12 @@
    "fieldtype": "Float",
    "label": "Remaining Net Weight (kg)",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.docstatus==1",
+   "fieldname": "draw_sample_btn",
+   "fieldtype": "Button",
+   "label": "Draw Sample"
   }
  ],
  "grid_page_length": 50,
