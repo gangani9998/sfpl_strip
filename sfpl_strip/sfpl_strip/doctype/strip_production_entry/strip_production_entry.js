@@ -74,6 +74,75 @@ frappe.ui.form.on("Strip Production Entry", {
         d.show();
     },
 
+    process_qc_btn(frm) {
+        let d = new frappe.ui.Dialog({
+            title: 'Process QC / Scrap',
+            fields: [
+                {
+                    label: 'Scrap Length (m)',
+                    fieldname: 'scrap_length',
+                    fieldtype: 'Float',
+                    reqd: 1
+                },
+                {
+                    label: 'Scrap Weight (kg)',
+                    fieldname: 'scrap_weight',
+                    fieldtype: 'Float',
+                    reqd: 1
+                },
+                {
+                    label: 'Defect Reason',
+                    fieldname: 'defect_reason',
+                    fieldtype: 'Data',
+                    reqd: 1
+                }
+            ],
+            primary_action_label: 'Process Scrap & Release',
+            primary_action: function(values) {
+                frappe.call({
+                    method: 'sfpl_strip.sfpl_strip.doctype.strip_production_entry.strip_production_entry.process_qc_scrap',
+                    args: {
+                        entry_name: frm.doc.name,
+                        scrap_length: values.scrap_length,
+                        defect_reason: values.defect_reason
+                    },
+                    freeze: true,
+                    callback: function(r) {
+                        if (!r.exc) {
+                            frappe.msgprint("Successfully processed QC Scrap and released the remaining roll to Finished Goods.");
+                            frm.reload_doc();
+                            d.hide();
+                        }
+                    }
+                });
+            }
+        });
+        
+        let get_gsm = () => flt(frm.doc.gsm) || 0;
+        
+        d.fields_dict.scrap_length.$input.on('input', function() {
+            if ($(this).is(':focus')) {
+                let len = flt($(this).val());
+                let gsm = get_gsm();
+                let weight = (len * gsm) / 1000;
+                d.set_value('scrap_weight', parseFloat(weight.toFixed(3)));
+            }
+        });
+        
+        d.fields_dict.scrap_weight.$input.on('input', function() {
+            if ($(this).is(':focus')) {
+                let weight = flt($(this).val());
+                let gsm = get_gsm();
+                if (gsm > 0) {
+                    let len = (weight * 1000) / gsm;
+                    d.set_value('scrap_length', parseFloat(len.toFixed(2)));
+                }
+            }
+        });
+
+        d.show();
+    },
+
     setup(frm) {
         // Fetch previous parameters on load if form is new
         if (frm.is_new() && frm.doc.strip_work_schedule) {

@@ -122,11 +122,18 @@ class StripProductionEntry(Document):
                     "is_finished_item": 0
                 })
             
+        company = frappe.defaults.get_user_default("Company")
+        company_abbr = frappe.get_cached_value("Company", company, "abbr")
+        
+        target_warehouse = default_warehouse
+        if self.flag_for_qc:
+            target_warehouse = f"QC Hold - {company_abbr}"
+
         # Addition: Finished Good
         se.append("items", {
             "item_code": self.strip_product_code,
             "qty": flt(self.roll_length),
-            "t_warehouse": default_warehouse,
+            "t_warehouse": target_warehouse,
             "is_finished_item": 1,
             "batch_no": self.name
         })
@@ -188,3 +195,92 @@ def make_sample_cut(entry_name, sample_length, purpose):
     doc.db_set("remaining_weight", new_remaining_weight)
     
     return se.name
+
+@frappe.whitelist()
+def process_qc_scrap(entry_name, scrap_length, defect_reason):
+    import frappe
+    from frappe.utils import flt
+    
+    doc = frappe.get_doc("Strip Production Entry", entry_name)
+    scrap_length = flt(scrap_length)
+    
+    if scrap_length <= 0:
+        frappe.throw("Scrap Length must be greater than 0")
+        
+    if scrap_length > flt(doc.remaining_length):
+        frappe.throw(f"Scrap length ({scrap_length} m) cannot exceed the remaining length of the roll ({doc.remaining_length} m).")
+        
+    ws = frappe.get_doc("Strip Work Schedule", doc.strip_work_schedule)
+    wastage_item = ws.get("wastage_item")
+    if not wastage_item:
+        frappe.throw(f"No Wastage Item defined in the Strip Work Schedule ({ws.name}). Please set one to process scrap.")
+        
+    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
+    company = frappe.defaults.get_user_default("Company")
+    company_abbr = frappe.get_cached_value("Company", company, "abbr")
+    quarantine_warehouse = f"QC Hold - {company_abbr}"
+    
+    # 1. Repack Scrap
+    se_repack = frappe.new_doc("Stock Entry")
+    se_repack.stock_entry_type = "Repack"
+    se_repack.purpose = "Repack"
+    se_repack.company = company
+    
+    # Issue Finished Good from QC
+    se_repack.append("items", {
+        "item_code": doc.strip_product_code,
+        "qty": scrap_length,
+        "s_warehouse": quarantine_warehouse,
+        "batch_no": doc.name
+    })
+    
+    # Receive Wastage Item into QC
+    se_repack.append("items", {
+        "item_code": wastage_item,
+        "qty": scrap_length,
+        "t_warehouse": quarantine_warehouse,
+        "is_finished_item": 1
+    })
+    
+    se_repack.insert(ignore_permissions=True)
+    se_repack.submit()
+    
+    new_remaining_length = flt(doc.remaining_length) - scrap_length
+    
+    # 2. Material Transfer for Remaining Good Length (if any left)
+    if new_remaining_length > 0:
+        se_transfer = frappe.new_doc("Stock Entry")
+        se_transfer.stock_entry_type = "Material Transfer"
+        se_transfer.purpose = "Material Transfer"
+        se_transfer.company = company
+        
+        se_transfer.append("items", {
+            "item_code": doc.strip_product_code,
+            "qty": new_remaining_length,
+            "s_warehouse": quarantine_warehouse,
+            "t_warehouse": default_warehouse,
+            "batch_no": doc.name
+        })
+        se_transfer.insert(ignore_permissions=True)
+        se_transfer.submit()
+    
+    if doc.gsm:
+        new_remaining_weight = (new_remaining_length * flt(doc.gsm)) / 1000.0
+    else:
+        new_remaining_weight = 0
+        
+    doc.db_set("remaining_length", new_remaining_length)
+    doc.db_set("remaining_weight", new_remaining_weight)
+    doc.db_set("flag_for_qc", 0) # Clear the flag
+    
+    # Optionally save the defect reason to a note or comment on the document
+    if defect_reason:
+        frappe.get_doc({
+            "doctype": "Comment",
+            "comment_type": "Info",
+            "reference_doctype": "Strip Production Entry",
+            "reference_name": doc.name,
+            "content": f"<b>QC Processed:</b> {scrap_length}m scrapped. Reason: {defect_reason}"
+        }).insert(ignore_permissions=True)
+    
+    return True

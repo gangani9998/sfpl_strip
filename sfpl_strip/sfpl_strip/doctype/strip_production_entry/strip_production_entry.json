@@ -23,10 +23,12 @@
   "roll_net_weight",
   "remaining_weight",
   "draw_sample_btn",
+  "process_qc_btn",
   "col_break_2",
   "roll_length",
   "remaining_length",
   "actual_strip_width",
+  "flag_for_qc",
   "params_section",
   "barrel_z1",
   "barrel_z2",
@@ -272,22 +274,36 @@
    "fetch_from": "strip_work_schedule.standard_strip_width"
   },
   {
+   "depends_on": "eval:doc.docstatus==1",
    "fieldname": "remaining_length",
    "fieldtype": "Float",
    "label": "Remaining Length (m)",
    "read_only": 1
   },
   {
+   "depends_on": "eval:doc.docstatus==1",
    "fieldname": "remaining_weight",
    "fieldtype": "Float",
    "label": "Remaining Net Weight (kg)",
    "read_only": 1
   },
   {
+   "fieldname": "flag_for_qc",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "QC Review"
+  },
+  {
    "depends_on": "eval:doc.docstatus==1",
    "fieldname": "draw_sample_btn",
    "fieldtype": "Button",
    "label": "Draw Sample"
+  },
+  {
+   "depends_on": "eval:doc.docstatus==1 && doc.flag_for_qc==1",
+   "fieldname": "process_qc_btn",
+   "fieldtype": "Button",
+   "label": "Process QC / Scrap"
   }
  ],
  "grid_page_length": 50,
