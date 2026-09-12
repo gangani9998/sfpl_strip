@@ -21,7 +21,6 @@
   "target_gsm",
   "warp_data_section",
   "warp_data",
-  "mixing_batch_size",
   "default_coating_ratios",
   "wastage_entries",
   "wastage_item",
@@ -66,17 +65,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "mixing_batch_size",
-   "fieldtype": "Float",
-   "label": "Mixing Batch Size Calculator (Kg)",
-   "allow_on_submit": 1
-  },
-  {
    "fieldname": "default_coating_ratios",
    "fieldtype": "Table",
    "label": "Coating Polymer Ratio",
-   "options": "Strip Coating Ratio",
-   "allow_on_submit": 1
+   "options": "Strip Coating Ratio"
   },
   {
    "fieldname": "schedule_section",

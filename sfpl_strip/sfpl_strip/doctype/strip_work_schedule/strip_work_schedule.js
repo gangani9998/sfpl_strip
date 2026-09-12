@@ -61,6 +61,154 @@ frappe.ui.form.on("Strip Work Schedule", {
             }).addClass("btn-primary");
         }
         
+        // Add Polymer Calculator Button
+        frm.add_custom_button(__("Polymer Calculator"), function() {
+            if (!frm.doc.default_coating_ratios || frm.doc.default_coating_ratios.length === 0) {
+                frappe.msgprint(__("No coating polymer ratio data found in BOM."));
+                return;
+            }
+
+            let item_codes = frm.doc.default_coating_ratios.map(r => r.coating_material).filter(Boolean);
+            
+            frappe.call({
+                method: 'frappe.client.get_list',
+                args: {
+                    doctype: 'Item',
+                    filters: { name: ['in', item_codes] },
+                    fields: ['name', 'item_name']
+                },
+                callback: function(r) {
+                    let item_names = {};
+                    if (r.message) {
+                        r.message.forEach(item => {
+                            item_names[item.name] = item.item_name;
+                        });
+                    }
+                    show_calculator(item_names);
+                }
+            });
+
+            function show_calculator(item_names) {
+                let fields = [
+                    {
+                        label: 'Total Batch Size (Kg)',
+                        fieldname: 'batch_size',
+                        fieldtype: 'Float',
+                        reqd: 1,
+                        default: 500
+                    },
+                    {
+                        fieldname: 'html_results',
+                        fieldtype: 'HTML'
+                    }
+                ];
+
+                let d = new frappe.ui.Dialog({
+                    title: __("Polymer Batch Calculator"),
+                    fields: fields,
+                    size: 'large',
+                    primary_action_label: __("Close"),
+                    primary_action: function() {
+                        d.hide();
+                    }
+                });
+
+                let is_updating = false;
+
+                function render_table() {
+                    let html = `
+                        <style>
+                            .req-kg-input::-webkit-outer-spin-button,
+                            .req-kg-input::-webkit-inner-spin-button {
+                                -webkit-appearance: none;
+                                margin: 0;
+                            }
+                            .req-kg-input {
+                                -moz-appearance: textfield;
+                            }
+                        </style>
+                        <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Coating Material</th>
+                                <th>Ratio (%)</th>
+                                <th>Required (Kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    
+                    frm.doc.default_coating_ratios.forEach((row, idx) => {
+                        let display_name = item_names[row.coating_material] || row.coating_material || "";
+                        html += `<tr>
+                            <td style="vertical-align: middle;">${display_name}</td>
+                            <td style="vertical-align: middle;">${row.ratio || 0}%</td>
+                            <td style="padding: 5px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="number" class="form-control req-kg-input" data-ratio="${row.ratio || 0}" style="text-align: right; flex: 1;">
+                                    <span style="font-weight: 500;">Kg</span>
+                                </div>
+                            </td>
+                        </tr>`;
+                    });
+                    
+                    html += `</tbody></table>`;
+                    d.fields_dict.html_results.$wrapper.html(html);
+
+                    // Bind reverse calculation events (Live typing in rows)
+                    d.fields_dict.html_results.$wrapper.find('.req-kg-input').on('input', function(e) {
+                        if (is_updating) return;
+                        
+                        let req_kg = flt($(this).val());
+                        let ratio = flt($(this).attr('data-ratio'));
+                        
+                        if (ratio > 0) {
+                            is_updating = true;
+                            let total_batch = req_kg / (ratio / 100);
+                            
+                            // Update Total Batch Size field
+                            d.get_field('batch_size').set_value(total_batch);
+                            
+                            // Update all other inputs
+                            d.fields_dict.html_results.$wrapper.find('.req-kg-input').each(function() {
+                                if (this !== e.target) {
+                                    let r = flt($(this).attr('data-ratio'));
+                                    let val = total_batch * (r / 100);
+                                    $(this).val(flt(val, 2));
+                                }
+                            });
+                            is_updating = false;
+                        }
+                    });
+                }
+
+                function handle_batch_change() {
+                    if (is_updating) return;
+                    is_updating = true;
+                    
+                    let batch = flt(d.get_value('batch_size'));
+                    d.fields_dict.html_results.$wrapper.find('.req-kg-input').each(function() {
+                        let ratio = flt($(this).attr('data-ratio'));
+                        let val = batch * (ratio / 100);
+                        $(this).val(flt(val, 2));
+                    });
+                    
+                    is_updating = false;
+                }
+
+                // Render UI
+                render_table();
+                
+                // Live update for total batch size typing
+                d.fields_dict.batch_size.$input.on('input', handle_batch_change);
+                d.fields_dict.batch_size.df.onchange = handle_batch_change;
+
+                // Trigger initial calculation
+                handle_batch_change();
+                
+                d.show();
+            }
+        });
+        
         if (frm.doc.docstatus === 2) {
             setTimeout(() => {
                 frm.page.clear_primary_action();
@@ -154,40 +302,12 @@ frappe.ui.form.on("Strip Work Schedule", {
 
     wastage_entries_remove: function(frm) {
         calculate_total_wastage(frm);
-    },
-    
-    mixing_batch_size: function(frm) {
-        if (frm.doc.mixing_batch_size && frm.doc.default_coating_ratios) {
-            let batch = flt(frm.doc.mixing_batch_size);
-            frm.doc.default_coating_ratios.forEach(d => {
-                let qty = batch * (flt(d.ratio) / 100);
-                frappe.model.set_value(d.doctype, d.name, 'qty_kg', qty);
-            });
-        }
     }
 });
 
 frappe.ui.form.on("Strip Wastage Entry", {
     wastage_qty: function(frm) {
         calculate_total_wastage(frm);
-    }
-});
-
-frappe.ui.form.on("Strip Coating Ratio", {
-    qty_kg: function(frm, cdt, cdn) {
-        let row = frappe.get_doc(cdt, cdn);
-        if (row.qty_kg && row.ratio) {
-            let total_batch = flt(row.qty_kg) / (flt(row.ratio) / 100);
-            frm.set_value('mixing_batch_size', total_batch);
-            
-            // Recalculate other rows
-            frm.doc.default_coating_ratios.forEach(d => {
-                if (d.name !== row.name) {
-                    let qty = total_batch * (flt(d.ratio) / 100);
-                    frappe.model.set_value(d.doctype, d.name, 'qty_kg', qty);
-                }
-            });
-        }
     }
 });
 
