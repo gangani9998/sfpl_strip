@@ -1,0 +1,136 @@
+<div class="mtc-wrapper">
+
+    <!-- Header Logo & Title Table -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none !important; background-color: transparent !important;">
+        <tr>
+            <td style="width: 30%; text-align: center; vertical-align: middle !important; padding: 0 10px 10px 10px; border: none !important; background-color: transparent !important;">
+                <img src="/files/Shivoham Febtech Logo_150x150px.jpg" style="width: 90%; max-width: 160px; height: auto; display: block; margin: 0 auto;" alt="Logo" />
+            </td>
+            <td style="width: 70%; text-align: center; vertical-align: middle !important; padding: 0 15px 10px 15px; border: none !important; background-color: transparent !important; font-size: 19px; font-weight: 800; color: #000000; text-decoration: underline;">
+                Manufacturer Test Certificate
+            </td>
+        </tr>
+    </table>
+
+    <!-- Metadata Table -->
+    <table class="meta-table" style="table-layout: fixed; width: 100%;">
+        <colgroup>
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+        </colgroup>
+        <tr style="height: 0 !important; line-height: 0 !important; font-size: 0 !important; border: none !important;">
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label" style="border-top-left-radius: 8px;">Date</td>
+            <td colspan="3" class="meta-value">
+                {% set pdate = doc.posting_date | string %}
+                {% if pdate and '-' in pdate %}
+                    {% set year = pdate.split('-')[0] %}
+                    {% set month_num = (pdate.split('-')[1] | int) %}
+                    {% set day_num = (pdate.split('-')[2][:2] | int) %}
+                    {% set months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
+                    {% set suffix = 'th' %}
+                    {% if day_num in [1, 21, 31] %}{% set suffix = 'st' %}
+                    {% elif day_num in [2, 22] %}{% set suffix = 'nd' %}
+                    {% elif day_num in [3, 23] %}{% set suffix = 'rd' %}
+                    {% endif %}
+                    {{ day_num }}{{ suffix }} of {{ months[month_num] }} {{ year }}
+                {% else %}
+                    {{ doc.posting_date }}
+                {% endif %}
+            </td>
+            <td colspan="2" class="meta-label">Doc. No.</td>
+            <td colspan="3" class="meta-value" style="border-top-right-radius: 8px;">SFPL/QC-002</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label">Time</td>
+            <td colspan="3" class="meta-value">
+                {% set pt = doc.posting_time | string %}
+                {% if pt %}
+                    {% set h = (pt.split(":")[0] | int) %}
+                    {% set m = pt.split(":")[1] %}
+                    {% set ampm = "AM" if h < 12 else "PM" %}
+                    {% set h_12 = h if h <= 12 else h - 12 %}
+                    {% set h_12 = 12 if h_12 == 0 else h_12 %}
+                    {{ h_12 }}:{{ m }} {{ ampm }} IST
+                {% endif %}
+            </td>
+            <td colspan="2" class="meta-label">Temperature</td>
+            <td colspan="3" class="meta-value">{{ doc.temperature }} &deg;C</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label">Product Name</td>
+            <td colspan="3" class="meta-value product-name">{{ frappe.db.get_value("Item", doc.quality, "item_name") or doc.quality }}</td>
+            <td colspan="2" class="meta-label">Humidity (RH)</td>
+            <td colspan="3" class="meta-value">{{ doc.rh }} %</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label" style="border-bottom-left-radius: 8px;">Batch No.</td>
+            <td colspan="3" class="meta-value">{{ doc.lot_no }}</td>
+            <td colspan="2" class="meta-label">Test Standard</td>
+            <td colspan="3" class="meta-value" style="border-bottom-right-radius: 8px;">{{ doc.test_standard }}</td>
+        </tr>
+    </table>
+
+
+
+    <!-- Results Section -->
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 65%; padding-left: 20px;">TEST PARAMETER</th>
+                <th style="width: 35%; text-align: center;">RESULT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="group-header">
+                <td colspan="2">Ultimate Tensile Strength (kN/m)</td>
+            </tr>
+            <tr>
+                <td class="indent-cell">Machine Direction (MD)</td>
+                <td class="text-center">{{ "%.2f"|format(doc.md_tensile_strenth | float) }}</td>
+            </tr>
+            <tr>
+                <td class="indent-cell">Cross Machine Direction (CMD)</td>
+                <td class="text-center">{{ "%.2f"|format(doc.cd_tensile_strenth | float) }}</td>
+            </tr>
+
+            <tr class="group-header">
+                <td colspan="2">Elongation at Ultimate Tensile Strength (%)</td>
+            </tr>
+            <tr>
+                <td class="indent-cell">Machine Direction (MD)</td>
+                <td class="text-center">{{ "%.2f"|format(doc.md_elongation_at_ultimate | float) }}</td>
+            </tr>
+            <tr>
+                <td class="indent-cell">Cross Machine Direction (CMD)</td>
+                <td class="text-center">{{ "%.2f"|format(doc.cd_elongation_at_ultimate | float) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <div class="signature-line"></div>
+            <div style="font-weight: 900; font-size: 13px; color: #000000 !important; text-transform: uppercase;">Authorised Signature</div>
+        </div>
+    </div>
+</div>

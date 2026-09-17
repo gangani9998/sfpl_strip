@@ -1,0 +1,265 @@
+<style>
+.mtc-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 35px;
+    font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #000000;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+.meta-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 10px;
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.meta-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ecef;
+    border-right: 1px solid #e9ecef;
+    font-size: 13px;
+}
+.meta-table tr:last-child td {
+    border-bottom: none;
+}
+.meta-table td:last-child {
+    border-right: none;
+}
+.meta-label {
+    font-weight: 700;
+    color: #000000;
+    background-color: #e9ecef !important;
+}
+.meta-value {
+    color: #000000;
+    font-weight: 600;
+}
+.product-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #000000;
+}
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.results-table th, .results-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    vertical-align: middle !important;
+}
+.results-table thead th {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    font-weight: 700;
+}
+.group-header {
+    background-color: #e9ecef !important;
+    font-weight: 800;
+    font-size: 13px;
+    color: #000000 !important;
+}
+.group-header td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.results-table tbody tr:not(.group-header):hover {
+    background-color: #f8f9fa;
+}
+.text-center {
+    text-align: center;
+    font-weight: 400;
+    font-size: 13px;
+}
+.signature-section {
+    margin-top: 150px;
+    text-align: right;
+    padding-right: 30px;
+}
+.signature-box {
+    display: inline-block;
+    text-align: center;
+    color: #000000 !important;
+}
+.signature-line {
+    border-top: 1px solid #000000;
+    width: 200px;
+    margin-bottom: 10px;
+}
+</style>
+<div class="mtc-wrapper">
+
+    <!-- Header Logo & Title Table -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none !important; background-color: transparent !important;">
+        <tr>
+            <td style="width: 30%; text-align: center; vertical-align: middle !important; padding: 0 10px 10px 10px; border: none !important; background-color: transparent !important;">
+                <img src="/files/Shivoham Febtech Logo_150x150px.jpg" style="width: 90%; max-width: 160px; height: auto; display: block; margin: 0 auto;" alt="Logo" />
+            </td>
+            <td style="width: 70%; text-align: center; vertical-align: middle !important; padding: 0 15px 10px 15px; border: none !important; background-color: transparent !important; font-size: 19px; font-weight: 800; color: #000000; text-decoration: underline;">
+                Manufacturer Test Certificate
+            </td>
+        </tr>
+    </table>
+    
+    {% set group = frappe.db.get_value("Item", doc.product_name, "item_group") or "" %}
+    {% set is_pack_strap = "pack" in group.lower() or "strap" in group.lower() %}
+    {% if "geo" in group.lower() %}
+        {% set is_pack_strap = False %}
+    {% endif %}
+
+    <!-- Metadata Table -->
+    <table class="meta-table" style="table-layout: fixed; width: 100%;">
+        <colgroup>
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+        </colgroup>
+        <tr style="height: 0 !important; line-height: 0 !important; font-size: 0 !important; border: none !important;">
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+            <td style="width: 10%; height: 0 !important; padding: 0 !important; border: none !important;"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label" style="border-top-left-radius: 8px;">Date</td>
+            <td colspan="3" class="meta-value">
+                {% set pdate = doc.posting_date | string %}
+                {% if pdate and '-' in pdate %}
+                    {% set year = pdate.split('-')[0] %}
+                    {% set month_num = (pdate.split('-')[1] | int) %}
+                    {% set day_num = (pdate.split('-')[2][:2] | int) %}
+                    {% set months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
+                    {% set suffix = 'th' %}
+                    {% if day_num in [1, 21, 31] %}{% set suffix = 'st' %}
+                    {% elif day_num in [2, 22] %}{% set suffix = 'nd' %}
+                    {% elif day_num in [3, 23] %}{% set suffix = 'rd' %}
+                    {% endif %}
+                    {{ day_num }}{{ suffix }} of {{ months[month_num] }} {{ year }}
+                {% else %}
+                    {{ doc.posting_date }}
+                {% endif %}
+            </td>
+            <td colspan="2" class="meta-label">Doc. No.</td>
+            <td colspan="3" class="meta-value" style="border-top-right-radius: 8px;">{{ doc.name }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label">Time</td>
+            <td colspan="3" class="meta-value">
+                {% set pt = doc.posting_time | string %}
+                {% if pt %}
+                    {% set h = (pt.split(":")[0] | int) %}
+                    {% set m = pt.split(":")[1] %}
+                    {% set ampm = "AM" if h < 12 else "PM" %}
+                    {% set h_12 = h if h <= 12 else h - 12 %}
+                    {% set h_12 = 12 if h_12 == 0 else h_12 %}
+                    {{ h_12 }}:{{ m }} {{ ampm }} IST
+                {% endif %}
+            </td>
+            <td colspan="2" class="meta-label">Temperature</td>
+            <td colspan="3" class="meta-value">{{ doc.temperature }} &deg;C</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label">Product Name</td>
+            <td colspan="3" class="meta-value product-name">{{ frappe.db.get_value("Item", doc.product_name, "item_name") or doc.product_name }}</td>
+            <td colspan="2" class="meta-label">Humidity (RH)</td>
+            <td colspan="3" class="meta-value">{{ doc.humidity }} %</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="meta-label" style="border-bottom-left-radius: 8px;">Batch No.</td>
+            <td colspan="3" class="meta-value">{{ doc.lot_no }}</td>
+            <td colspan="2" class="meta-label">Roll No.</td>
+            <td colspan="3" class="meta-value" style="border-bottom-right-radius: 8px;">{{ doc.roll_no }}</td>
+        </tr>
+    </table>
+
+    <!-- Tensile Test Results Section -->
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 25%; text-align: center;">Specimen No</th>
+                <th style="width: 25%; text-align: center;">Tensile Strength</th>
+                {% if not is_pack_strap %}
+                <th style="width: 25%; text-align: center;">Elongation at Designated</th>
+                <th style="width: 25%; text-align: center;">Elongation at Ultimate</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in doc.specimen_data %}
+            <tr>
+                <td class="text-center">{{ row.idx }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.tensile_strenth | float) if row.tensile_strenth else "-" }}</td>
+                {% if not is_pack_strap %}
+                <td class="text-center">{{ "%.2f"|format(row.elongation_at_designeted | float) if row.elongation_at_designeted else "-" }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.elongation_at_ultimate | float) if row.elongation_at_ultimate else "-" }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr class="group-header">
+                <td class="text-center">Mean</td>
+                <td class="text-center">{{ "%.2f"|format(doc.mean_tensile_strength | float) if doc.mean_tensile_strength else "-" }}</td>
+                {% if not is_pack_strap %}
+                <td class="text-center">{{ "%.2f"|format(doc.mean_elongation_designated | float) if doc.mean_elongation_designated else "-" }}</td>
+                <td class="text-center">{{ "%.2f"|format(doc.mean_elongation_ultimate | float) if doc.mean_elongation_ultimate else "-" }}</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+
+    {% if is_pack_strap and doc.system_strength_data %}
+    <br>
+    <!-- System Strength Results Section (Packstrap Only) -->
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 50%; text-align: center;">Specimen No</th>
+                <th style="width: 50%; text-align: center;">System Strength</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in doc.system_strength_data %}
+            <tr>
+                <td class="text-center">{{ row.specimen_no }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.system_strength | float) if row.system_strength else "-" }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="group-header">
+                <td class="text-center">Mean</td>
+                <td class="text-center">{{ "%.2f"|format(doc.mean_system_strength | float) if doc.mean_system_strength else "-" }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <div class="signature-line"></div>
+            <div style="font-weight: 900; font-size: 13px; color: #000000 !important; text-transform: uppercase;">Authorised Signature</div>
+        </div>
+    </div>
+</div>
