@@ -133,9 +133,9 @@ class StripWorkSchedule(Document):
             # 2. Coating Weight per meter (kg/m)
             target_kg_per_m = target_glm / 1000
             coating_kg_per_m = target_kg_per_m - yarn_kg_per_m
+            
             if coating_kg_per_m < 0:
                 coating_kg_per_m = 0.0
-                
             if self.default_coating_ratios:
                 for row in self.default_coating_ratios:
                     weight = coating_kg_per_m * (frappe.utils.flt(row.ratio) / 100)
