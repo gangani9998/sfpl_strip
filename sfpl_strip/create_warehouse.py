@@ -1,17 +1,22 @@
 import frappe
 
 def create():
-    company = frappe.db.get_value("Company", {"name": ["like", "Shivoham%"]}, "name")
-    parent = frappe.db.get_value("Warehouse", {"is_group": 1}, "name")
-    abbr = frappe.get_cached_value("Company", company, "abbr")
+    companies = frappe.get_all("Company", pluck="name")
     
-    if not frappe.db.exists("Warehouse", f"QC Hold - {abbr}"):
-        w = frappe.new_doc("Warehouse")
-        w.warehouse_name = "QC Hold"
-        w.parent_warehouse = parent
-        w.company = company
-        w.insert(ignore_permissions=True)
-        frappe.db.commit()
-        print(f"Created QC Hold - {abbr}")
-    else:
-        print(f"QC Hold - {abbr} already exists")
+    for company in companies:
+        parent = frappe.db.get_value("Warehouse", {"is_group": 1, "company": company}, "name")
+        if not parent:
+            continue
+            
+        abbr = frappe.get_cached_value("Company", company, "abbr")
+        warehouse_name = f"QC Hold - {abbr}"
+        
+        if not frappe.db.exists("Warehouse", warehouse_name):
+            w = frappe.new_doc("Warehouse")
+            w.warehouse_name = "QC Hold"
+            w.parent_warehouse = parent
+            w.company = company
+            w.insert(ignore_permissions=True)
+            print(f"Created QC Hold - {abbr} for {company}")
+        else:
+            print(f"QC Hold - {abbr} already exists for {company}")
