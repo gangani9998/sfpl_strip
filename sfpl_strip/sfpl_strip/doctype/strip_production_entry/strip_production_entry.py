@@ -8,6 +8,15 @@ import qrcode
 from io import BytesIO
 from frappe.utils.file_manager import save_file
 
+
+def get_company_default_warehouse(company):
+    if not company:
+        frappe.throw("Please set a Default Company.")
+    warehouse = frappe.get_cached_value("Company", company, "default_warehouse")
+    if not warehouse:
+        frappe.throw(f"Please set a Default Warehouse in Company {company}.")
+    return warehouse
+
 class StripProductionEntry(Document):
     def validate(self):
         if self.strip_work_schedule and self.is_new():
@@ -86,9 +95,7 @@ class StripProductionEntry(Document):
         se.strip_production_entry = self.name
         se.company = frappe.defaults.get_user_default("Company")
         
-        default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
-        if not default_warehouse:
-            frappe.throw("Please set a Default Warehouse in Stock Settings.")
+        default_warehouse = get_company_default_warehouse(se.company)
             
         se.from_warehouse = default_warehouse
         se.to_warehouse = default_warehouse
@@ -160,9 +167,7 @@ def make_sample_cut(entry_name, sample_length, purpose):
     se.purpose = "Material Issue"
     se.company = frappe.defaults.get_user_default("Company")
     
-    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
-    if not default_warehouse:
-        frappe.throw("Please set a Default Warehouse in Stock Settings.")
+    default_warehouse = get_company_default_warehouse(se.company)
         
     if purpose == "Lab Testing":
         expense_account = "Lab Testing - SFPL"
@@ -215,8 +220,8 @@ def process_qc_scrap(entry_name, scrap_length, defect_reason):
     if not wastage_item:
         frappe.throw(f"No Wastage Item defined in the Strip Work Schedule ({ws.name}). Please set one to process scrap.")
         
-    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
     company = frappe.defaults.get_user_default("Company")
+    default_warehouse = get_company_default_warehouse(company)
     company_abbr = frappe.get_cached_value("Company", company, "abbr")
     quarantine_warehouse = f"QC Hold - {company_abbr}"
     
