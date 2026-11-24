@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from sfpl_strip.sfpl_strip.doctype.strip_production_entry.strip_production_entry import get_company_default_warehouse
 
 class StripWorkSchedule(Document):
     def validate(self):
@@ -159,14 +160,11 @@ class StripWorkSchedule(Document):
             frappe.throw("Cannot post wastage because calculated RM weight is zero.")
             
         # 3. Generate Stock Entry (Repack)
-        default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
-        if not default_warehouse:
-            frappe.throw("Please set a Default Warehouse in Stock Settings.")
-            
         se = frappe.new_doc("Stock Entry")
         se.stock_entry_type = "Repack"
         se.purpose = "Repack"
         se.company = frappe.defaults.get_user_default("Company")
+        default_warehouse = get_company_default_warehouse(se.company)
         se.from_warehouse = default_warehouse
         se.to_warehouse = default_warehouse
         
